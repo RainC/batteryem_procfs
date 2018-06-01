@@ -139,7 +139,7 @@ static const struct file_operations my_proc_fops = {
 /*
         This function will be called on initialization of  kernel module
 */
-int init_module(void)
+int init_process(void)
 {
  
         int ret = 0;
@@ -163,5 +163,5 @@ void process_exit(void)
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
 }
 
-module_init(init_module);
+module_init(init_process);
 module_exit(process_exit);
