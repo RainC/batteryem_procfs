@@ -20,6 +20,7 @@ MODULE_LICENSE("GPL");
 #define PROCFS_TESTLEVEL        "battery_test"
 #define PROCFS_NOTIFYPID        "battery_notify"
 #define PROCFS_THRESHOLD        "battery_threshold"
+#define PROCFS_PIDTH            "pid_th"
  
  
 /* Declaration of variables used in this module */
@@ -39,6 +40,7 @@ static int threshold = -1;
 static char procfs_buffer[PROCFS_MAX_SIZE];     
 static unsigned long procfs_buffer_size = 0;    //size of receive side buffer
 static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
+static struct proc_dir_entry *pid_th_entry;       //indicates procfs entry.
  
 /* End of declaration */
  
@@ -145,8 +147,9 @@ int init_process(void)
         int ret = 0;
         
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        printk(KERN_ALERT "[init] init procfs ");
-        if(proc_entry == NULL)
+        pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
+        
+        if(proc_entry == NULL && pid_th_entry == NULL)
         {
                 return -ENOMEM;
         }
@@ -161,6 +164,7 @@ void process_exit(void)
 {
         printk(KERN_ALERT "[exit]Exit");
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
+        remove_proc_entry(PROCFS_PIDTH, pid_th_entry);
 }
 
 module_init(init_process);
