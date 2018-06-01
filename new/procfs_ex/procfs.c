@@ -146,22 +146,11 @@ static const struct file_operations my_proc_fops = {
 */
 int init_process(void)
 {
- 
         int ret = 0;
-        
         char *msg;
         msg="123123";
-
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        
-        // pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
         pid_th_entry = proc_create_data(PROCFS_PIDTH,0666,NULL,&my_proc_fops,msg);
-
-// struct pid_th_t
-// {
-// 	char pid[PROCFS_LENGTH + 1];
-// 	char threshold[PROCFS_LENGTH + 1];
-// };            
 
         
 
