@@ -155,7 +155,7 @@ ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_po
         return count;
 }
 
-int chr_iotcl(sturct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg) {
+int chr_ioctl(sturct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg) {
         switch(cmd) {
                 case 0: printk("cmd value is %d\n", cmd) ; break;
                 case 4: printk("cmd value is %d\n", cmd); break;
