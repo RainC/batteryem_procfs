@@ -157,11 +157,11 @@ int init_module(void)
 /*
         This function will be called on cleaning up of kernel module
 */
-void cleanup_module(void)
+void process_exit(void)
 {
         printk(KERN_ALERT "[exit]Exit");
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
 }
 
 module_init(init_module);
-module_exit(cleanup_module);
+module_exit(process_exit);
