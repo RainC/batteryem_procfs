@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
 
     } else {
         printf( "Device open fail \n");
+        printf(device)
     }
     return 0;
 }
