@@ -182,8 +182,7 @@ static const struct file_operations my_proc_fops = {
 
  int init_process(void){
         int ret = 0;
-        int regist_driver; 
-        remove_proc_entry("battery_test", proc_entry);
+        int regist_driver;
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         regist_driver = register_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME, &my_proc_fops);
 
