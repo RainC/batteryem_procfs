@@ -154,7 +154,9 @@ static int init_process(void){
 }
 
 static void exit_process(void) {
+    remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
     printk(KERN_ALERT "[exit] Hello Test.");
+
 }
  
 /*
