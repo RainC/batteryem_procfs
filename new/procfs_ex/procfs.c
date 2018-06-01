@@ -193,10 +193,10 @@ static int init_process(void){
                 return regist_driver;
         }
         printk("Major Number : %d\n",regist_driver);
-        
 
 
-        return ret;
+
+        return 0;
 }
 
 static void exit_process(void) {
