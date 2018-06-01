@@ -150,10 +150,10 @@ int init_process(void)
         
         procfs_buffer[0] = '3';
         procfs_buffer[1] = '4';
-        
+
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
-        pid_th_entry.write(procfs_buffer)
+        pid_th_entry->write(procfs_buffer)
         
 // struct pid_th_t
 // {
