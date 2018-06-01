@@ -153,7 +153,7 @@ int init_process(void)
         msg="123123";
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         
-        proc_pid_th = proc_create_data(PROCFS_PIDTH,0,NULL,&my_proc_fops,msg);
+        proc_create_data(PROCFS_PIDTH,0,NULL,&my_proc_fops,msg);
 
 
 
