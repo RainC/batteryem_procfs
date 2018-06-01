@@ -153,7 +153,7 @@ int init_process(void)
         msg="123123";
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         
-        pid_th_entry = proc_create_data(PROCFS_PIDTH,0666,NULL,&my_proc_fops,msg);
+        pid_th_entry = proc_create_data("pid_th" ,0666,NULL,&my_proc_fops,msg);
 
         printk(KERN_ALERT "[init] init!!");
 
