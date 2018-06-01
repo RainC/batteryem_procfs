@@ -18,7 +18,7 @@
 
 
 
-#define MODULE_VERSION "1.0"
+#define PFS_MODULE_VERSION "1.0"
 #define MODULE_NAME "procfs_example"
 
 #define FOOBAR_LEN 8
