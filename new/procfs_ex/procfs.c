@@ -148,14 +148,17 @@ int init_process(void)
  
         int ret = 0;
         
-        procfs_buffer[0] = '3';
-        procfs_buffer[1] = '4';
+      
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
         
-        pid_th_entry.write();
-        
+        strcpy(foo_data.pid, "32");
+        strcpy(foo_data.threshold, "333"); 
+
+        pid_th_entry->data = foo_data;
+        pid_th_entry->write_proc = test_level_write;
+
 // struct pid_th_t
 // {
 // 	char pid[PROCFS_LENGTH + 1];
