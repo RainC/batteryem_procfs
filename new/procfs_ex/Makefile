@@ -1,4 +1,4 @@
-obj-m := procfs.o
+obj-m += procfs.o
 KERNELDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
