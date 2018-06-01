@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/fnctl.h>
+#include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unisted.h>
 
