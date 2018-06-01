@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     char rbuf[128] = "Read buffer data";
     int n = atoi(argv[1]);
 
-    device = open(DEVICE_FILE_NAME, 0_RDWR | O_NDELAY);
+    device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY);
     if (device >=0 ) {
         printf( "Device file Open\n");
         ioctl(device ,n);
