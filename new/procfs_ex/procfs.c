@@ -209,3 +209,9 @@ static void __exit cleanup_procfs_example(void)
 
 module_init(init_procfs_example);
 module_exit(cleanup_procfs_example);
+
+
+MODULE_AUTHOR("Erik Mouw");
+MODULE_DESCRIPTION("procfs examples");
+
+EXPORT_NO_SYMBOLS;
