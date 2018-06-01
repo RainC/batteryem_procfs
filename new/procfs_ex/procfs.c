@@ -138,9 +138,6 @@ static const struct file_operations my_proc_fops = {
 };
  
  
- struct file_operations test_proc_fops = {
-read: read_proc
-};
 
  
  
@@ -158,7 +155,7 @@ int init_process(void)
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         
         // pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
-        pid_th_entry = proc_create_data(PROCFS_PIDTH,0666,NULL,&test_proc_fops,msg);
+        pid_th_entry = proc_create_data(PROCFS_PIDTH,0666,NULL,&my_proc_fops,msg);
         strcpy(foo_data.pid, "32");
         strcpy(foo_data.threshold, "333"); 
 
