@@ -1,0 +1,2 @@
+#!/bin/bash
+scp $1 rubyrain@rubycs.rainclab.net:/home/rubyrain/system
