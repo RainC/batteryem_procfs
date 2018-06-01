@@ -24,7 +24,7 @@ MODULE_LICENSE("GPL");
 #define PROCFS_NOTIFYPID        "battery_notify"
 #define PROCFS_THRESHOLD        "battery_threshold"
 
-#define CHR_DEV_NAME "battery_device"
+#define CHR_DEV_NAME "chr_dev"
 #define CHR_DEV_MAJOR 240
 
  
@@ -169,11 +169,11 @@ int chr_release(struct inode *inode , struct file *filep) {
 }
 
 struct file_operations chr_fops = {
-        owner: THIS_MODULE ,
-        unlocked_ioctl: chr_ioctl, 
-        write: chr_write,
-        open: chr_read, 
-        release: chr_release
+        .owner=  THIS_MODULE ,
+        .unlocked_ioctl=  chr_ioctl, 
+        .write=  chr_write,
+        .open = chr_read, 
+        .release =  chr_release
 };
 
 
