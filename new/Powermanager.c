@@ -14,7 +14,7 @@ int main(void){
 	// 아닐 때 표준모드
 
 	FILE *fp;
-	fp = fopen("/proc/battery/pid_th", "w+");
+	fp = fopen("/proc/battery/pid_th", "w");
 	// fprintf(fp, "This is testing for fprintf...\n");
 	fprintf(fp, "%d %d", getpid(), 20);
 	fclose(fp);

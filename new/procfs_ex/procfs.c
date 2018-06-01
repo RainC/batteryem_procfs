@@ -109,10 +109,6 @@ static int test_level_read( struct file *filp, char *user_space_buffer, size_t c
                 ret = count;
         else
                 ret = procfs_buffer_size - *off;
- 
- 
- 
- 
         flag = copy_to_user(user_space_buffer, procfs_buffer + (*off), ret);
  
         if(flag < 0)
@@ -149,10 +145,13 @@ int init_process(void)
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
         
-        if(proc_entry == NULL && pid_th_entry == NULL)
-        {
-                return -ENOMEM;
-        }
+        
+        
+
+        // if(proc_entry == NULL && pid_th_entry == NULL)
+        // {
+        //         return -ENOMEM;
+        // }
         return ret;
  
 }
