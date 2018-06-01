@@ -189,6 +189,11 @@ static int init_process(void){
         {
         return -ENOMEM;
         }
+        if (regist_driver < 0) {
+                return regist_driver;
+        }
+        printk("Major Number : %d\n",regist_driver);
+        
 
 
         return ret;
