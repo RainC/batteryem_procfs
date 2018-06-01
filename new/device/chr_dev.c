@@ -198,7 +198,6 @@ static const struct file_operations my_proc_fops = {
 void exit_process(void) {
     printk(KERN_ALERT "[exit] unregist device to kernel");
     unregister_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME);
-    remove_proc_entry("battery_test", proc_entry);
 }
  
 /*
