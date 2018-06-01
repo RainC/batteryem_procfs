@@ -168,7 +168,7 @@ int chr_release(struct inode *inode , struct file *filep) {
 }
 static const struct file_operations my_proc_fops = {
         .write = test_level_write,
-        .read = test_level_read,
+        .read = chr_read,
         .owner=  THIS_MODULE ,
         .unlocked_ioctl=  chr_ioctl, 
         .write=  chr_write,
