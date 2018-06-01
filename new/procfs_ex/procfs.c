@@ -12,9 +12,6 @@
 #include <linux/sched.h>
 #include <linux/rcupdate.h>
 #include <linux/string.h>
-
-#include <linux/fs.h>
-
  
 MODULE_LICENSE("GPL");
  
@@ -23,10 +20,6 @@ MODULE_LICENSE("GPL");
 #define PROCFS_TESTLEVEL        "battery_test"
 #define PROCFS_NOTIFYPID        "battery_notify"
 #define PROCFS_THRESHOLD        "battery_threshold"
-
-#define CHR_DEV_NAME "chr_dev"
-#define CHR_DEV_MAJOR 240
-
  
  
 /* Declaration of variables used in this module */
@@ -56,6 +49,7 @@ static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
 */
 static int test_level_write( struct file *filp, const char *user_space_buffer, unsigned long len, loff_t *off )
 {
+ 
         int status = 0;
         int requested;
  
@@ -134,82 +128,39 @@ static int test_level_read( struct file *filp, char *user_space_buffer, size_t c
  
         This structure indicate functions when read or write operation occured.
 */
-
-
-
-
-ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos){
-        printk("write data: %s\n", buf);
-        return count;
-}
-
-ssize_t chr_read(struct file *filp, const char *buf, size_t count, loff_t *f_pos) {
-        printk("read data: %s\n", buf);
-        return count;
-}
-
-int chr_open(struct inode *inode, struct file *filep) {
-        int number = MINOR(inode->i_rdev);
-        printk("Virtual Character Device Open: Minor Number is %d\n", number );
-        return 0;
-}
-
-int chr_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg) {
-        switch(cmd) {
-                case 0: printk("cmd value is %d\n", cmd) ; break;
-                case 4: printk("cmd value is %d\n", cmd); break;
-        }
-        return 0;
-}
-
-int chr_release(struct inode *inode , struct file *filep) {
-        printk("Virtual Character Device Release\n");
-        return 0;
-}
 static const struct file_operations my_proc_fops = {
         .write = test_level_write,
         .read = test_level_read,
-        .owner=  THIS_MODULE ,
-        .unlocked_ioctl=  chr_ioctl, 
-        .write=  chr_write,
-        .open = chr_read, 
-        .release =  chr_release
 };
-
-
-
-
-
- int init_process(void){
+ 
+ 
+ 
+ 
+/*
+        This function will be called on initialization of  kernel module
+*/
+int init_module(void)
+{
+ 
         int ret = 0;
-        int regist_driver;
+ 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        regist_driver = register_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME, &my_proc_fops);
-
+ 
         if(proc_entry == NULL)
         {
-        return -ENOMEM;
+                return -ENOMEM;
         }
-        if (regist_driver < 0) {
-                return regist_driver;
-        }
-        printk(KERN_ALERT "Major Number : %d\n",regist_driver);
-
-
-
-        return 0;
-}
-
-void exit_process(void) {
-    printk(KERN_ALERT "[exit] unregist device to kernel");
-    unregister_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME);
-    remove_proc_entry("battery_test", proc_entry);
+        return ret;
+ 
 }
  
 /*
         This function will be called on cleaning up of kernel module
 */
+void cleanup_module(void)
+{
+        remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
+}
 
-
-module_init(init_process);
-module_exit(exit_process);
+module_init(init_module);
+module_exit(cleanup_module);
