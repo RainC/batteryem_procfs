@@ -134,15 +134,6 @@ static int test_level_read( struct file *filp, char *user_space_buffer, size_t c
  
         This structure indicate functions when read or write operation occured.
 */
-static const struct file_operations my_proc_fops = {
-        .write = test_level_write,
-        .read = test_level_read,
-        .owner=  THIS_MODULE ,
-        .unlocked_ioctl=  chr_ioctl, 
-        .write=  chr_write,
-        .open = chr_read, 
-        .release =  chr_release
-};
 
 
 
@@ -175,6 +166,15 @@ int chr_release(struct inode *inode , struct file *filep) {
         printk("Virtual Character Device Release\n");
         return 0;
 }
+static const struct file_operations my_proc_fops = {
+        .write = test_level_write,
+        .read = test_level_read,
+        .owner=  THIS_MODULE ,
+        .unlocked_ioctl=  chr_ioctl, 
+        .write=  chr_write,
+        .open = chr_read, 
+        .release =  chr_release
+};
 
 
 
