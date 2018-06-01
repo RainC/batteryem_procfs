@@ -12,6 +12,9 @@
 #include <linux/sched.h>
 #include <linux/rcupdate.h>
 #include <linux/string.h>
+
+#include <linux/fs.h>
+
  
 MODULE_LICENSE("GPL");
  
@@ -20,6 +23,10 @@ MODULE_LICENSE("GPL");
 #define PROCFS_TESTLEVEL        "battery_test"
 #define PROCFS_NOTIFYPID        "battery_notify"
 #define PROCFS_THRESHOLD        "battery_threshold"
+
+#define CHR_DEV_NAME "battery_device"
+#define CHR_DEV_MAJOR 240
+
  
  
 /* Declaration of variables used in this module */
@@ -49,7 +56,6 @@ static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
 */
 static int test_level_write( struct file *filp, const char *user_space_buffer, unsigned long len, loff_t *off )
 {
- 
         int status = 0;
         int requested;
  
@@ -132,19 +138,59 @@ static const struct file_operations my_proc_fops = {
         .write = test_level_write,
         .read = test_level_read,
 };
- 
- 
- 
+
+int chr_open(struct inode *inode, struct file *filep) {
+        int number = MINOR(inode->i_rdef);
+        printk("Virtual Character Device Open: Minor Number is %d\n", number );
+        return 0;
+}
+
+ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos){
+        printk("write data: %s\n", buf);
+        return count;
+}
+
+ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos) {
+        printk("read data: %s\n", buf);
+        return count;
+}
+
+int chr_iotcl(sturct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg) {
+        switch(cmd) {
+                case 0: printk("cmd value is %d\n", cmd) ; break;
+                case 4: printk("cmd value is %d\n", cmd); break;
+        }
+        return 0;
+}
+
+int chr_release(struct inode *inode , struct file *filep) {
+        printk("Virtual Character Device Release\n");
+        return 0;
+}
+
+struct file_operations chr_fops = {
+        owner: THIS_MODULE ,
+        unlocked_ioctl: chr_ioctl, 
+        write: chr_write,
+        open: chr_read, 
+        release: chr_release
+};
+
+
+
 
 static int init_process(void){
         int ret = 0;
-
+        int regist_driver; 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
+        register_Dri
 
         if(proc_entry == NULL)
         {
         return -ENOMEM;
         }
+
+
         return ret;
 }
 
