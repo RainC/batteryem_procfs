@@ -183,7 +183,7 @@ static int init_process(void){
         int ret = 0;
         int regist_driver; 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        register_Dri
+        regist_driver = register_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME, &chr_fops);
 
         if(proc_entry == NULL)
         {
@@ -195,7 +195,8 @@ static int init_process(void){
 }
 
 static void exit_process(void) {
-    printk(KERN_ALERT "[exit] Hello Test.");
+    printk(KERN_ALERT "[exit] unregist device to kernel");
+    unregister_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME);
 }
  
 /*
