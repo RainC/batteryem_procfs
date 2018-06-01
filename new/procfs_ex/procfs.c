@@ -150,7 +150,7 @@ int init_process(void)
         int ret = 0;
         
         char *msg;
-        msg="123123"
+        msg="123123";
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         
