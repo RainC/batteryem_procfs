@@ -150,7 +150,7 @@ ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_po
         return count;
 }
 
-ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos) {
+ssize_t chr_read(struct file *filp, const char *buf, size_t count, loff_t *f_pos) {
         printk("read data: %s\n", buf);
         return count;
 }
