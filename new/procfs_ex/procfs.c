@@ -1,9 +1,21 @@
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/proc_fs.h>
+
+
 #include <linux/sched.h>
+#include <linux/rcupdate.h>
+#include <linux/module.h>   /* Needed by all modules */
+#include <linux/kernel.h>   /* Needed for KERN_INFO */
+#include <linux/proc_fs.h>
+#include <linux/string.h>
+#include <linux/vmalloc.h>
 #include <asm/uaccess.h>
+#include <linux/init.h>
+#include <asm/siginfo.h>
+#include <linux/signal.h>
+#include <linux/sched.h>
+#include <linux/rcupdate.h>
+#include <linux/string.h>
+ 
+
 
 
 #define MODULE_VERSION "1.0"
