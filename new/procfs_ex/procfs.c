@@ -1,5 +1,3 @@
-
-
 #include <linux/sched.h>
 #include <linux/rcupdate.h>
 #include <linux/module.h>   /* Needed by all modules */
@@ -15,195 +13,172 @@
 #include <linux/rcupdate.h>
 #include <linux/string.h>
  
-
-
-
-#define PFS_MODULE_VERSION "1.0"
-#define MODULE_NAME "procfs_example"
-
-#define FOOBAR_LEN 8
-
-struct fb_data_t {
-        char name[FOOBAR_LEN + 1];
-        char value[FOOBAR_LEN + 1];
+MODULE_LICENSE("GPL");
+ 
+ 
+#define PROCFS_MAX_SIZE         1024
+#define PROCFS_TESTLEVEL        "battery_test"
+#define PROCFS_NOTIFYPID        "battery_notify"
+#define PROCFS_THRESHOLD        "battery_threshold"
+#define PROCFS_PIDTH            "pid_th"
+#define PROCFS_LENGTH 8
+ 
+/* Declaration of variables used in this module */
+ 
+ 
+static int level = 99;
+static int test_level = 0;                      //indicates level of battery remain.
+static int notify_pid = -1;
+static int threshold = -1;
+ 
+/* End of declaration */
+ 
+struct pid_th_t
+{
+	char pid[PROCFS_LENGTH + 1];
+	char threshold[PROCFS_LENGTH + 1];
 };
 
-
-static struct proc_dir_entry *example_dir, *foo_file,
-        *bar_file, *jiffies_file, *tty_device, *symlink;
-
-
-struct fb_data_t foo_data, bar_data;
-
-
-static int proc_read_jiffies(char *page, char **start,
-                             off_t off, int count,
-                             int *eof, void *data)
+struct pid_th_t foo_data;
+ 
+/* Declaration of ancillary variables */
+ 
+static char procfs_buffer[PROCFS_MAX_SIZE];     
+static unsigned long procfs_buffer_size = 0;    //size of receive side buffer
+static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
+static struct proc_dir_entry *pid_th_entry;       //indicates procfs entry.
+ 
+/* End of declaration */
+ 
+ 
+ 
+/*
+        Implementation of procfs write function
+*/
+static int test_level_write( struct file *filp, const char *user_space_buffer, unsigned long len, loff_t *off )
 {
-        int len;
-
-        
-        len = sprintf(page, "jiffies = %ld\n",
-                      jiffies);
-
-        return len;
-}
-
-
-static int proc_read_foobar(char *page, char **start,
-                            off_t off, int count, 
-                            int *eof, void *data)
-{
-        int len;
-        struct fb_data_t *fb_data = (struct fb_data_t *)data;
-
-        
-        len = sprintf(page, "%s = '%s'\n", 
-                      fb_data->name, fb_data->value);
-
-
-        return len;
-}
-
-
-static int proc_write_foobar(struct file *file,
-                             const char *buffer,
-                             unsigned long count, 
-                             void *data)
-{
-        int len;
-        struct fb_data_t *fb_data = (struct fb_data_t *)data;
-
-
-        if(count > FOOBAR_LEN)
-                len = FOOBAR_LEN;
-        else
-                len = count;
-
-        if(copy_from_user(fb_data->value, buffer, len)) {
-                
+ 
+        int status = 0;
+        int requested;
+ 
+        procfs_buffer_size = len;
+ 
+        if (procfs_buffer_size > PROCFS_MAX_SIZE ) {
+                procfs_buffer_size = PROCFS_MAX_SIZE;
+        }
+ 
+        /* write data to the buffer */
+        if ( copy_from_user(procfs_buffer, user_space_buffer, procfs_buffer_size) ) {
                 return -EFAULT;
         }
-
-        fb_data->value[len] = '\0';
-
-        return len;
+ 
+        status  = kstrtoint(procfs_buffer, 10, &requested);
+        if(status < 0)
+        {
+                printk(KERN_INFO "Error while called kstrtoint(...)\n");
+                return -ENOMEM;
+        }
+        // validate level value.
+        if(requested< 0 || requested > 100){
+                printk(KERN_INFO "Invalid battery level.\n");
+                return -ENOMEM;
+        }
+        // accept value.
+        test_level = requested;
+ 
+        // *off += procfs_buffer_size; // not necessary here!
+ 
+        return procfs_buffer_size;
+ 
 }
-
-
-static int __init init_procfs_example(void)
+ 
+/*
+        Implementation of procfs read function
+*/
+static int test_level_read( struct file *filp, char *user_space_buffer, size_t count, loff_t *off )
 {
-        int rv = 0;
-
-        /* create directory */
-        example_dir = proc_mkdir(MODULE_NAME, NULL);
-        if(example_dir == NULL) {
-                rv = -ENOMEM;
-                goto out;
+        int ret = 0;
+        int flag = 0;
+ 
+        if(*off < 0) *off = 0;
+ 
+        snprintf(procfs_buffer, 16, "%d\n", test_level);
+        procfs_buffer_size = strlen(procfs_buffer);
+ 
+        if(*off > procfs_buffer_size){
+                return -EFAULT;
+        }else if(*off == procfs_buffer_size){
+                return 0;
         }
-        
-        example_dir->owner = THIS_MODULE;
-        
-        /* create jiffies using convenience function */
-        jiffies_file = create_proc_read_entry("jiffies", 
-                                              0444, example_dir, 
-                                              proc_read_jiffies,
-                                              NULL);
-        if(jiffies_file == NULL) {
-                rv  = -ENOMEM;
-                goto no_jiffies;
-        }
-
-        jiffies_file->owner = THIS_MODULE;
-
-        /* create foo and bar files using same callback
-         * functions 
-         */
-        foo_file = create_proc_entry("foo", 0644, example_dir);
-        if(foo_file == NULL) {
-                rv = -ENOMEM;
-                goto no_foo;
-        }
-
-        strcpy(foo_data.name, "foo");
-        strcpy(foo_data.value, "foo");
-        foo_file->data = &foo_data;
-        foo_file->read_proc = proc_read_foobar;
-        foo_file->write_proc = proc_write_foobar;
-        foo_file->owner = THIS_MODULE;
-                
-        bar_file = create_proc_entry("bar", 0644, example_dir);
-        if(bar_file == NULL) {
-                rv = -ENOMEM;
-                goto no_bar;
-        }
-
-        strcpy(bar_data.name, "bar");
-        strcpy(bar_data.value, "bar");
-        bar_file->data = &bar_data;
-        bar_file->read_proc = proc_read_foobar;
-        bar_file->write_proc = proc_write_foobar;
-        bar_file->owner = THIS_MODULE;
-                
-        /* create tty device */
-        tty_device = proc_mknod("tty", S_IFCHR | 0666,
-                                example_dir, MKDEV(5, 0));
-        if(tty_device == NULL) {
-                rv = -ENOMEM;
-                goto no_tty;
-        }
-        
-        tty_device->owner = THIS_MODULE;
-
-        /* create symlink */
-        symlink = proc_symlink("jiffies_too", example_dir, 
-                               "jiffies");
-        if(symlink == NULL) {
-                rv = -ENOMEM;
-                goto no_symlink;
-        }
-
-        symlink->owner = THIS_MODULE;
-
-        /* everything OK */
-        printk(KERN_INFO "%s %s initialised\n",
-               MODULE_NAME, MODULE_VERSION);
-        return 0;
-
-no_symlink:
-        remove_proc_entry("tty", example_dir);
-no_tty:
-        remove_proc_entry("bar", example_dir);
-no_bar:
-        remove_proc_entry("foo", example_dir);
-no_foo:
-        remove_proc_entry("jiffies", example_dir);
-no_jiffies:                           
-        remove_proc_entry(MODULE_NAME, NULL);
-out:
-        return rv;
+ 
+        if(procfs_buffer_size - *off > count)
+                ret = count;
+        else
+                ret = procfs_buffer_size - *off;
+        flag = copy_to_user(user_space_buffer, procfs_buffer + (*off), ret);
+ 
+        if(flag < 0)
+                return -EFAULT;
+ 
+        *off += ret;
+ 
+        return ret;
+ 
 }
-
-
-static void __exit cleanup_procfs_example(void)
+ 
+ 
+/*
+        Configuration of file_operations
+ 
+        This structure indicate functions when read or write operation occured.
+*/
+static const struct file_operations my_proc_fops = {
+        .write = test_level_write,
+        .read = test_level_read,
+};
+ 
+ 
+ 
+ 
+/*
+        This function will be called on initialization of  kernel module
+*/
+int init_process(void)
 {
-        remove_proc_entry("jiffies_too", example_dir);
-        remove_proc_entry("tty", example_dir);
-        remove_proc_entry("bar", example_dir);
-        remove_proc_entry("foo", example_dir);
-        remove_proc_entry("jiffies", example_dir);
-        remove_proc_entry(MODULE_NAME, NULL);
+ 
+        int ret = 0;
+        
+        procfs_buffer = "300 300"
+        proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
+        pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
+        pid_th_entry.write(procfs_buffer)
+        
+// struct pid_th_t
+// {
+// 	char pid[PROCFS_LENGTH + 1];
+// 	char threshold[PROCFS_LENGTH + 1];
+// };            
 
-        printk(KERN_INFO "%s %s removed\n",
-               MODULE_NAME, MODULE_VERSION);
+        
+
+
+        if(proc_entry == NULL && pid_th_entry == NULL)
+        {
+                return -ENOMEM;
+        }
+        return ret;
+ 
+}
+ 
+/*
+        This function will be called on cleaning up of kernel module
+*/
+void process_exit(void)
+{
+        printk(KERN_ALERT "[exit]Exit");
+        remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
+        remove_proc_entry(PROCFS_PIDTH, pid_th_entry);
 }
 
-
-module_init(init_procfs_example);
-module_exit(cleanup_procfs_example);
-
-
-MODULE_AUTHOR("Erik Mouw");
-MODULE_DESCRIPTION("procfs examples");
-
-EXPORT_NO_SYMBOLS;
+module_init(init_process);
+module_exit(process_exit);
