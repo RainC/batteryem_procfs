@@ -39,6 +39,8 @@ struct pid_th_t
 	char threshold[PROCFS_LENGTH + 1];
 };
 
+struct proc_dir_entry *proc_pid_th;
+
 struct pid_th_t foo_data;
  
 /* Declaration of ancillary variables */
@@ -150,7 +152,8 @@ int init_process(void)
         char *msg;
         msg="123123";
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        pid_th_entry = proc_create_data(PROCFS_PIDTH,0,NULL,&my_proc_fops,msg);
+        
+        proc_pid_th = proc_create_data(PROCFS_PIDTH,0,NULL,&my_proc_fops,msg);
 
 
 
