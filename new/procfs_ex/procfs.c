@@ -140,7 +140,7 @@ static const struct file_operations my_proc_fops = {
 };
 
 int chr_open(struct inode *inode, struct file *filep) {
-        int number = MINOR(inode->i_rdef);
+        int number = MINOR(inode->i_rdev);
         printk("Virtual Character Device Open: Minor Number is %d\n", number );
         return 0;
 }
