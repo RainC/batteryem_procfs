@@ -143,7 +143,7 @@ static const struct file_operations my_proc_fops = {
 
 static int init_process(void){
         int ret = 0;
-
+        printk(KERN_ALERT "[init] procfs init!");
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
 
         if(proc_entry == NULL)
