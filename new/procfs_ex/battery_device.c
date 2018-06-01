@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/fnctl.h>
@@ -15,15 +14,15 @@ int main(int argc, char *argv[]) {
 
     device = open(DEVICE_FILE_NAME, 0_RDWR | O_NDELAY);
     if (device >=0 ) {
-        printf("Device file Open\n");
+        printk(KERN_ALERT "Device file Open\n");
         ioctl(device ,n);
         write(device, wbuf, 10); 
-        printf("Write Value is %s\n", wbuf);
+        printk(KERN_ALERT "Write Value is %s\n", wbuf);
         read(device, rbuf,10);
-        printf("Read value is %s\n", rbuf);
+        printk(KERN_ALERT "Read value is %s\n", rbuf);
 
     } else {
-        printf("Device open fail \n");
+        printk(KERN_ALERT "Device open fail \n");
     }
     return 0;
 }
