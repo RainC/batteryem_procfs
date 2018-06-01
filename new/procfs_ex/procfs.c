@@ -139,28 +139,28 @@ static const struct file_operations my_proc_fops = {
 /*
         This function will be called on initialization of  kernel module
 */
-int init_module(void)
-{
- 
+
+
+static int init_process(void){
         int ret = 0;
- 
+
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
- 
+
         if(proc_entry == NULL)
         {
-                return -ENOMEM;
+        return -ENOMEM;
         }
         return ret;
- 
+}
+
+static void exit_process(void) {
+    printk(KERN_ALERT "[exit] Hello Test.");
 }
  
 /*
         This function will be called on cleaning up of kernel module
 */
-void cleanup_module(void)
-{
-        remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
-}
 
-module_init(init_module);
-module_exit(cleanup_module);
+
+module_init(init_process);
+module_exit(exit_process);
