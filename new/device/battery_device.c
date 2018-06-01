@@ -18,13 +18,13 @@ int main(int argc, char *argv[]) {
         printf( "Device file Open\n");
         ioctl(device ,n);
         write(device, wbuf, 10); 
-        printf( "Write Value is %s\n", wbuf);
+        printf( "Write Value is ::::: %s\n", wbuf);
         read(device, rbuf,10);
-        printf( "Read value is %s\n", rbuf);
+        printf( "Read value is ::::: %s\n", rbuf);
 
     } else {
         printf( "Device open fail \n");
-        printf(device)
+        printf("%d", device);
     }
     return 0;
 }
