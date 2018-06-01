@@ -42,7 +42,6 @@ static int proc_read_jiffies(char *page, char **start,
 {
         int len;
 
-        MOD_INC_USE_COUNT;
         
         len = sprintf(page, "jiffies = %ld\n",
                       jiffies);
@@ -60,7 +59,6 @@ static int proc_read_foobar(char *page, char **start,
         int len;
         struct fb_data_t *fb_data = (struct fb_data_t *)data;
 
-        MOD_INC_USE_COUNT;
         
         len = sprintf(page, "%s = '%s'\n", 
                       fb_data->name, fb_data->value);
@@ -79,7 +77,6 @@ static int proc_write_foobar(struct file *file,
         int len;
         struct fb_data_t *fb_data = (struct fb_data_t *)data;
 
-        MOD_INC_USE_COUNT;
 
         if(count > FOOBAR_LEN)
                 len = FOOBAR_LEN;
