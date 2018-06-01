@@ -148,7 +148,7 @@ int init_process(void)
  
         int ret = 0;
         
-        procfs_buffer = "300 300"
+        procfs_buffer = '300 300'
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pid_th_entry = proc_create(PROCFS_PIDTH, 0666, NULL, &my_proc_fops);
         pid_th_entry.write(procfs_buffer)
