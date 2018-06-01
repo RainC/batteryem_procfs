@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <unisted.h>
+#include <unistd.h>
 
 #define DEVICE_FILE_NAME "/dev/chr_dev"
 
