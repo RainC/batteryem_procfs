@@ -268,7 +268,7 @@ static int threshold_write( struct file *filp, const char *user_space_buffer, un
         // accept value.
         // threshold, notify pid detection..
 
-        notify_pid = requested;
+        threshold = requested;
         
 
         *off += threshold_buffer_size; // not necessary here!
