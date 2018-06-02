@@ -12,16 +12,18 @@ int main(void){
 	// Threshold value 는 20
 	// 20 이하일 때 절전모드
 	// 아닐 때 표준모드
-
+	printf("getpid : %d\n", getpid());
+	
 	FILE *fp;
+	FILE *fp2;
 	fp = fopen("/proc/pidnum", "w");
-	// fprintf(fp, "This is testing for fprintf...\n");
 	fprintf(fp, "%d", getpid());
-	printf("getpid : %d", getpid());
 	fclose(fp);
-	fp = fopen("/proc/threshold", "w");
-	fprintf(fp, "%d", 20);
-	fclose(fp);
+
+
+	fp2 = fopen("/proc/threshold", "w");
+	fprintf(fp2, "%d", 20);
+	fclose(fp2);
 
 	// 신호처리 예외
 	if (signal(SIGUSR1, sig_usr) == SIG_ERR)
