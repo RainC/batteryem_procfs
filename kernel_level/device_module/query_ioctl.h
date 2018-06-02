@@ -6,7 +6,7 @@
 
 typedef struct
 {
-	int status, dignity, ego;
+	int test_level, level
 } query_arg_t;
 
 #define QUERY_GET_VARIABLES _IOR('q', 1, query_arg_t *)

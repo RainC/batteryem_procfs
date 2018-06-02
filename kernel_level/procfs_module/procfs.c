@@ -70,70 +70,70 @@ static struct proc_dir_entry *pidnum_entry;       //pidnum, threshold
 static struct proc_dir_entry *threshold_entry;       //pidnum, threshold
 
 
+static dev_t dev;
+static struct cdev c_dev;
+static struct class *cl;
+static int status = 1, dignity = 3, ego = 5;
 
-#define CHR_DEV_NAME "chr_dev"
-#define CHR_DEV_MAJOR 240
-
-ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos){
-        printk("write data: %s\n", buf);
-        return count;
-}
-
-ssize_t chr_read(struct file *filp, const char *buf, size_t count, loff_t *f_pos) {
-        printk("read data: %s\n", buf);
-        return count;
-}
-
-int chr_open(struct inode *inode, struct file *filep) {
-        int number = MINOR(inode->i_rdev);
-        printk("Virtual Character Device Open: Minor Number is %d\n", number );
-        return 0;
-}
-
-typedef struct
+static int my_open(struct inode *i, struct file *f)
 {
-	int test_battery_value, threshold;
-} query_arg_t;
+	return 0;
+}
+static int my_close(struct inode *i, struct file *f)
+{
+	return 0;
+}
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35))
+static int my_ioctl(struct inode *i, struct file *f, unsigned int cmd, unsigned long arg)
+#else
+static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+#endif
+{
+	query_arg_t q;
 
-#define QUERY_GET_VARIABLES _IOR('q', 1, query_arg_t *)
-#define QUERY_CLR_VARIABLES _IO('q', 2)
-#define QUERY_SET_VARIABLES _IOW('q', 3, query_arg_t *)
-
-
-int chr_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg) {
-        query_arg_t q;
-        switch(cmd) {
-                case QUERY_GET_VARIABLES:
-			q.test_battery_value = test_level;
-			q.threshold = threshold; 
+	switch (cmd)
+	{
+		case QUERY_GET_VARIABLES:
+			q.status = status;
+			q.dignity = dignity;
+			q.ego = ego;
 			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
 			{
 				return -EACCES;
 			}
 			break;
 		case QUERY_CLR_VARIABLES:
-			test_level = 0;
-			threshold = 0;
+			status = 0;
+			dignity = 0;
+			ego = 0;
 			break;
 		case QUERY_SET_VARIABLES:
 			if (copy_from_user(&q, (query_arg_t *)arg, sizeof(query_arg_t)))
 			{
 				return -EACCES;
 			}
-			test_level = q.test_battery_value;
-			threshold = q.threshold;
+			status = q.status;
+			dignity = q.dignity;
+			ego = q.ego;
 			break;
 		default:
 			return -EINVAL;
-        }
-        return 0;
-}
-int chr_release(struct inode *inode , struct file *filep) {
-        printk("Virtual Character Device Release\n");
-        return 0;
+	}
+
+	return 0;
 }
 
- 
+static struct file_operations query_fops =
+{
+	.owner = THIS_MODULE,
+	.open = my_open,
+	.release = my_close,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35))
+	.ioctl = my_ioctl
+#else
+	.unlocked_ioctl = my_ioctl
+#endif
+};
 
 
 /* End of declaration */
@@ -446,17 +446,6 @@ static const struct file_operations threshold_ops = {
         .read = threshold_read,
 };
 
-struct file_operations chr_fops =  {
-        owner: THIS_MODULE,
-        unlocked_ioctl: chr_ioctl, 
-        write: chr_write,
-        read: chr_read,
-        open:chr_open,
-        release:chr_release
-};
- 
-
- 
  
 /*
         This function will be called on initialization of  kernel module
@@ -482,6 +471,39 @@ int init_process(void)
                 printk(KERN_ALERT "[error] pid_th_entry&other is failed");
                 return -ENOMEM;
         }
+
+	struct device *dev_ret;
+
+
+	if ((ret = alloc_chrdev_region(&dev, FIRST_MINOR, MINOR_CNT, "query_ioctl")) < 0)
+	{
+		return ret;
+	}
+
+	cdev_init(&c_dev, &query_fops);
+
+	if ((ret = cdev_add(&c_dev, dev, MINOR_CNT)) < 0)
+	{
+		return ret;
+	}
+	
+	if (IS_ERR(cl = class_create(THIS_MODULE, "char")))
+	{
+		cdev_del(&c_dev);
+		unregister_chrdev_region(dev, MINOR_CNT);
+		return PTR_ERR(cl);
+	}
+	if (IS_ERR(dev_ret = device_create(cl, NULL, dev, NULL, "query")))
+	{
+		class_destroy(cl);
+		cdev_del(&c_dev);
+		unregister_chrdev_region(dev, MINOR_CNT);
+		return PTR_ERR(dev_ret);
+	}
+
+
+
+
         return ret;
  
 }

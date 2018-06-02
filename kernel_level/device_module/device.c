@@ -15,7 +15,7 @@
 static dev_t dev;
 static struct cdev c_dev;
 static struct class *cl;
-static int status = 1, dignity = 3, ego = 5;
+static int level, test_level;
 
 static int my_open(struct inode *i, struct file *f)
 {
@@ -36,27 +36,24 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 	switch (cmd)
 	{
 		case QUERY_GET_VARIABLES:
-			q.status = status;
-			q.dignity = dignity;
-			q.ego = ego;
+			q.test_level = test_level;
+			q.level = level;
 			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
 			{
 				return -EACCES;
 			}
 			break;
 		case QUERY_CLR_VARIABLES:
-			status = 0;
-			dignity = 0;
-			ego = 0;
+			level = 0;
+			test_level = 0;
 			break;
 		case QUERY_SET_VARIABLES:
 			if (copy_from_user(&q, (query_arg_t *)arg, sizeof(query_arg_t)))
 			{
 				return -EACCES;
 			}
-			status = q.status;
-			dignity = q.dignity;
-			ego = q.ego;
+			level = q.level;
+			test_level = q.test_level;
 			break;
 		default:
 			return -EINVAL;
