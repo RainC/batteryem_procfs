@@ -8,6 +8,7 @@
 #include <asm/uaccess.h>
 
 #include "query_ioctl.h"
+#include "procfs.c"
 
 #define FIRST_MINOR 0
 #define MINOR_CNT 1
