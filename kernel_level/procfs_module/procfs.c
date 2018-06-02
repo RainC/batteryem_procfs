@@ -15,6 +15,8 @@
    
 #include <asm/siginfo.h>  	
 #include <linux/debugfs.h> 
+#include <linux/fs.h>
+
 
 
  
@@ -38,7 +40,8 @@ static int level = 99;
 static int test_level = 0;                      //indicates level of battery remain.
 static int notify_pid = -1;
 static int threshold = -1;
- 
+
+
 /* End of declaration */
  
 struct pid_th_t
@@ -66,6 +69,50 @@ static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
 static struct proc_dir_entry *pidnum_entry;       //pidnum, threshold
 static struct proc_dir_entry *threshold_entry;       //pidnum, threshold
 
+
+
+#define CHR_DEV_NAME "chr_dev"
+#define CHR_DEV_MAJOR 240
+
+ssize_t chr_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos){
+        printk("write data: %s\n", buf);
+        return count;
+}
+
+ssize_t chr_read(struct file *filp, const char *buf, size_t count, loff_t *f_pos) {
+        printk("read data: %s\n", buf);
+        return count;
+}
+
+int chr_open(struct inode *inode, struct file *filep) {
+        int number = MINOR(inode->i_rdev);
+        printk("Virtual Character Device Open: Minor Number is %d\n", number );
+        return 0;
+}
+
+typedef struct
+{
+	int test_battery_value, threshold;
+} query_arg_t;
+
+int chr_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigned long arg) {
+        query_arg_t q;
+        switch(cmd) {
+                case 1: // Get value
+                        q.test_battery_value = test_level;
+                        q.threshold = threshold;
+                        if (copy_to_user((query_arg_t *) arg, &q, sizeof(query_arg_t))) {
+                                printk("cmd value is %d\n", cmd) ; 
+                                return -EACCES;
+                        }
+                break;
+        }
+        return 0;
+}
+int chr_release(struct inode *inode , struct file *filep) {
+        printk("Virtual Character Device Release\n");
+        return 0;
+}
 
  
 
@@ -96,6 +143,7 @@ static int send_signal_logic(pid_t pid, int sig) {
         printk("Error : %d", error);
         return error;
 }
+
 
 
  
@@ -379,6 +427,14 @@ static const struct file_operations threshold_ops = {
         .read = threshold_read,
 };
 
+struct file_operations chr_fops =  {
+        owner: THIS_MODULE,
+        unlocked_ioctl: chr_ioctl, 
+        write: chr_write,
+        read: chr_read,
+        open:chr_open,
+        release:chr_release
+}
  
 
  
@@ -386,16 +442,20 @@ static const struct file_operations threshold_ops = {
 /*
         This function will be called on initialization of  kernel module
 */
+
 int init_process(void)
 {
         int ret = 0;
         char *msg;
         msg="123 123";
+        int driver_regist ;
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
         threshold_entry = proc_create("threshold", 0666, NULL, &threshold_ops);
-
+        
+        driver_regist = register_chrdev(CHR_DEV_NAME, CHR_DEV_MAJOR,&chr_fops);
+        
         printk(KERN_ALERT "[init] init!!");
 
         if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL)
@@ -416,6 +476,7 @@ void process_exit(void)
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
         remove_proc_entry("pidnum", pidnum_entry);
         remove_proc_entry("threshold", threshold_entry);
+        unregister_chrdev(CHR_DEV_MAJOR,CHR_DEV_NAME);
 }
 
 module_init(init_process);
