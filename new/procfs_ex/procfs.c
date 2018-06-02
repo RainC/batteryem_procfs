@@ -6,14 +6,17 @@
 #include <linux/string.h>
 #include <linux/vmalloc.h>
 #include <asm/uaccess.h>
-#include <linux/init.h>
-#include <asm/siginfo.h>
-#include <linux/signal.h>
-#include <linux/sched.h>
+#include <linux/init.h> 
+#include <linux/signal.h> 
 #include <linux/rcupdate.h>
 #include <linux/string.h>
+  
+#include <linux/sched.h>    //find_task_by_pid_type
+   
+#include <asm/siginfo.h>  	
+#include <linux/debugfs.h> 
 
-#include <linux/signal.h>
+
  
 MODULE_LICENSE("GPL");
  
@@ -26,6 +29,7 @@ MODULE_LICENSE("GPL");
 #define PROCFS_LENGTH 8
 #define SIGNAL_USR1  1
 #define SIGNAL_USR2  2
+#define SIG_TEST 44
  
 /* Declaration of variables used in this module */
  
@@ -126,7 +130,27 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
 
 
 static void send_signal_logic(int pidnum, int signal_type) {
-        kill(pidnum, signal_type);
+        char mybuf[10];
+        struct siginfo info;
+	struct task_struct *t;
+        memset(&info, 0, sizeof(struct siginfo));
+        info.si_signo = SIG_TEST;
+	info.si_code = SI_QUEUE;
+        info.si_int = 1234;
+        rcu_read_lock();
+        t = find_task_by_pid_type(PIDTYPE_PID, pidnum);
+        if(t == NULL){
+		printk("no such pid\n");
+		rcu_read_unlock();
+		return -ENODEV;
+	}
+        rcu_read_unlock();
+        ret = send_sig_info(SIG_TEST, &info, t);
+        if (ret < 0) {
+		printk("error sending signal\n");
+		return ret;
+	}
+        return 0;
 }
 
 static int test_level_read( struct file *filp, char *user_space_buffer, size_t count, loff_t *off )
