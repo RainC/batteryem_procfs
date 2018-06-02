@@ -16,7 +16,7 @@
 MODULE_LICENSE("GPL");
  
  
-#define PROCFS_MAX_SIZE         1024
+#define PROCFS_MAX_SIZE         4096
 #define PROCFS_TESTLEVEL        "battery_test"
 #define PROCFS_NOTIFYPID        "battery_notify"
 #define PROCFS_THRESHOLD        "battery_threshold"
@@ -167,10 +167,6 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
         if(status < 0)
         {
                 printk(KERN_INFO "Error while called kstrtoint(...) - %d", status);
-                
-                
-                
-                
                 return -ENOMEM;
         } else {
                 printk(KERN_INFO "status > 0 -> success \n");
@@ -190,7 +186,7 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
         notify_pid = requested;
         
         int i;
-        *off += pidnum_buffer_size; // not necessary here!
+        // *off += pidnum_buffer_size; // not necessary here!
  
                 for (i = 0; i < 1024 ; i ++) {
                         pidnum_buffer[i] = (char)0;
