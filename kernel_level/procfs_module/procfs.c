@@ -453,7 +453,7 @@ struct file_operations chr_fops =  {
         read: chr_read,
         open:chr_open,
         release:chr_release
-}
+};
  
 
  
