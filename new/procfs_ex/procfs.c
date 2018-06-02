@@ -88,7 +88,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
         
         if(status < 0)
         {
-                printk(KERN_INFO "Error while called kstrtoint(...)\n");
+                printk(KERN_INFO "Error while called kstrtoint(...) %d", status);
                 return -ENOMEM;
         } else {
                 printk(KERN_INFO "status > 0 -> success \n");
