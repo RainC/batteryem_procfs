@@ -90,10 +90,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
         {
                 printk(KERN_INFO "Error while called kstrtoint(...) - %d", status);
                 int i;
-                for (i = 0; i < 1024 ; i ++) {
-                        procfs_buffer[i] = (char)0;
-                }
-
+               
                 return -ENOMEM;
         } else {
                 printk(KERN_INFO "status > 0 -> success \n");
@@ -109,7 +106,10 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
         test_level = requested;
  
         // *off += procfs_buffer_size; // not necessary here!
- 
+         for (i = 0; i < 1024 ; i ++) {
+                procfs_buffer[i] = (char)0;
+        }
+
         return procfs_buffer_size; 
 }
 
@@ -168,9 +168,7 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
                 printk(KERN_INFO "Error while called kstrtoint(...) - %d", status);
                 int i;
                 
-                for (i = 0; i < 1024 ; i ++) {
-                        pidnum_buffer[i] = (char)0;
-                }
+                
                 return -ENOMEM;
         } else {
                 printk(KERN_INFO "status > 0 -> success \n");
@@ -192,6 +190,9 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
 
         // *off += pidnum_buffer_size; // not necessary here!
  
+                for (i = 0; i < 1024 ; i ++) {
+                        pidnum_buffer[i] = (char)0;
+                }
         return pidnum_buffer_size; 
 }
 
