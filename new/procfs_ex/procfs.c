@@ -365,7 +365,7 @@ void process_exit(void)
         printk(KERN_ALERT "[exit]Exit");
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
         remove_proc_entry("pidnum", pidnum_entry);
-        remove_proc_entry("threshold", pidnum_entry);
+        remove_proc_entry("threshold", threshold_entry);
 }
 
 module_init(init_process);
