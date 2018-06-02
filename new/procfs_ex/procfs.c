@@ -85,7 +85,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
         }
  
         status  = kstrtoint(procfs_buffer, 10, &requested);
-        printk(KERN_INFO "buffer %c\n", procfs_buffer);
+        printk(KERN_INFO "user_space buffer %c\n", user_space_buffer);
         if(status < 0)
         {
                 printk(KERN_INFO "Error while called kstrtoint(...) - %d", status);
