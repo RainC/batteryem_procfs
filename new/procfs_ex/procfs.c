@@ -86,7 +86,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
  
         status  = kstrtoint(procfs_buffer, 10, &requested);
         printk(KERN_INFO "user_space buffer %c\n", user_space_buffer);
-        printk(KERN_INFO "filep %c\n", filep);
+        // printk(KERN_INFO "filep %c\n", filep.name);
         
         if(status < 0)
         {
