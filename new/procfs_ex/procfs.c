@@ -89,7 +89,7 @@ static int send_signal_logic(pid_t pid, int sig) {
         } while (p != &init_task);   /* stop when we get back to init */
         if (t != NULL) {
                 pspid = t->pids[PIDTYPE_PID].pid;
-                if (pspid != NULL) error = kill_pid(pspid,SIGUSR1,1);
+                if (pspid != NULL) error = kill_pid(pspid,sig,1);
         }
         rcu_read_unlock();
 
@@ -144,9 +144,9 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
         // accept value.
         test_level = requested;
         if (test_level < threshold ) { 
-                send_signal_logic(notify_pid, SIGNAL_USR1);
+                send_signal_logic(notify_pid, SIGUSR1);
         } else {
-                send_signal_logic(notify_pid, SIGNAL_USR2);
+                send_signal_logic(notify_pid, SIGUSR2);
         }
         
         // *off += procfs_buffer_size; // not necessary here!
