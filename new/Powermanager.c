@@ -16,7 +16,8 @@ int main(void){
 	FILE *fp;
 	fp = fopen("/proc/pidnum", "w");
 	// fprintf(fp, "This is testing for fprintf...\n");
-	fprintf(fp, "%d", 12345);
+	fprintf(fp, "%d", getpid());
+	printf("getpid : %d", getpid());
 	fclose(fp);
 	fp = fopen("/proc/threshold", "w");
 	fprintf(fp, "%d", 20);
