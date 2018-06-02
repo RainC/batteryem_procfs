@@ -473,11 +473,11 @@ int init_process(void)
         pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
         threshold_entry = proc_create("threshold", 0666, NULL, &threshold_ops);
         
-        driver_regist = register_chrdev(CHR_DEV_NAME, CHR_DEV_MAJOR,&chr_fops);
+        // driver_regist = register_chrdev(CHR_DEV_NAME, CHR_DEV_MAJOR,&chr_fops);
         
         printk(KERN_ALERT "[init] init!!");
 
-        if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL)
+        if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL && driver_regist)
         {
                 printk(KERN_ALERT "[error] pid_th_entry&other is failed");
                 return -ENOMEM;
@@ -495,7 +495,7 @@ void process_exit(void)
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
         remove_proc_entry("pidnum", pidnum_entry);
         remove_proc_entry("threshold", threshold_entry);
-        unregister_chrdev(CHR_DEV_MAJOR,CHR_DEV_NAME);
+        // unregister_chrdev(CHR_DEV_MAJOR,CHR_DEV_NAME);
 }
 
 module_init(init_process);
