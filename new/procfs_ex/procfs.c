@@ -271,7 +271,7 @@ static int threshold_write( struct file *filp, const char *user_space_buffer, un
         threshold = requested;
         
 
-        *off += threshold_buffer_size; // not necessary here!
+        // *off += threshold_buffer_size; // not necessary here!
  
         return threshold_buffer_size; 
 }
