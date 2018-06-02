@@ -342,7 +342,7 @@ int init_process(void)
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
-        
+
         printk(KERN_ALERT "[init] init!!");
 
         if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL)
@@ -362,7 +362,6 @@ void process_exit(void)
         printk(KERN_ALERT "[exit]Exit");
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
         remove_proc_entry("pidnum", pidnum_entry);
-        remove_proc_entry("threshold", threshold_entry);
 }
 
 module_init(init_process);
