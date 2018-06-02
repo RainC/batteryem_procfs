@@ -4,7 +4,7 @@ PWD := $(shell pwd)
 CFLAGS :=  -DEXPORT_SYMTAB
 
 default:
-	$(MAKE)-C $(KERNELDIR) M=$(PWD) CLAGS=$(CFLAGS) modules
+	$(MAKE) -C $(KERNELDIR) M=$(PWD) CFLAGS=$(CFLAGS) modules
 
 clean:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
