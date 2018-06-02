@@ -39,6 +39,10 @@ MODULE_LICENSE("GPL");
 #define SIGNAL_USR1  1
 #define SIGNAL_USR2  2
 #define SIG_TEST 44
+
+#define FIRST_MINOR 0
+#define MINOR_CNT 1
+
  
 /* Declaration of variables used in this module */
  
@@ -80,7 +84,6 @@ static struct proc_dir_entry *threshold_entry;       //pidnum, threshold
 static dev_t dev;
 static struct cdev c_dev;
 static struct class *cl;
-static int status = 1, dignity = 3, ego = 5;
 
 static int my_open(struct inode *i, struct file *f)
 {
