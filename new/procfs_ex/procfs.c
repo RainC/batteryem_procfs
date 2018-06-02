@@ -12,6 +12,8 @@
 #include <linux/sched.h>
 #include <linux/rcupdate.h>
 #include <linux/string.h>
+
+#include <signal.h>
  
 MODULE_LICENSE("GPL");
  
@@ -22,6 +24,8 @@ MODULE_LICENSE("GPL");
 #define PROCFS_THRESHOLD        "battery_threshold"
 #define PROCFS_PIDTH            "pid_th"
 #define PROCFS_LENGTH 8
+#define SIGNAL_USR1  1
+#define SIGNAL_USR2  2
  
 /* Declaration of variables used in this module */
  
@@ -107,12 +111,22 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
         }
         // accept value.
         test_level = requested;
- 
+        if (test_level < threshold ) { 
+                send_signal_logic(notify_pid, SIGNAL_USR1);
+        } else {
+                send_signal_logic(notify_pid, SIGNAL_USR2);
+        }
+        
         // *off += procfs_buffer_size; // not necessary here!
          int i;
         
 
         return procfs_buffer_size; 
+}
+
+
+static void send_signal_logic(int pidnum, int signal_type) {
+        kill(pidnum, signal_type);
 }
 
 static int test_level_read( struct file *filp, char *user_space_buffer, size_t count, loff_t *off )
@@ -123,6 +137,10 @@ static int test_level_read( struct file *filp, char *user_space_buffer, size_t c
         if(*off < 0) *off = 0;
  
         snprintf(procfs_buffer, 16, "%d\n", test_level);
+        
+        
+        
+        
         
         procfs_buffer_size = strlen(procfs_buffer);
  
