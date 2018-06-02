@@ -205,7 +205,7 @@ static int pidnum_read( struct file *filp, char *user_space_buffer, size_t count
  
         if(*off < 0) *off = 0;
  
-        snprintf(pidnum_buffer, 16, "%d\n", test_level);
+        snprintf(pidnum_buffer, 16, "%d\n", notify_pid);
         pidnum_buffer_size = strlen(pidnum_buffer);
  
         if(*off > pidnum_buffer_size){
