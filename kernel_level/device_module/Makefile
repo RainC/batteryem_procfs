@@ -1,10 +1,10 @@
 obj-m += device.o
 KERNELDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
-CFLAGS +=  -DEXPORT_SYMTAB
+CFLAGS :=  -DEXPORT_SYMTAB
 
 default:
-	$(MAKE) $(CFLAGS) -C $(KERNELDIR) M=$(PWD) modules
+	$(MAKE)-C $(KERNELDIR) M=$(PWD) CLAGS=$(CFLAGS) modules
 
 clean:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
