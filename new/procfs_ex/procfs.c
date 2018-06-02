@@ -48,10 +48,10 @@ struct pid_th_t foo_data;
 char procfs_buffer[PROCFS_MAX_SIZE];     
 static unsigned long procfs_buffer_size = 0;    //size of receive side buffer
 
-char pidnum_buffer[PROCFS_MAX_SIZE];     
+static char pidnum_buffer[PROCFS_MAX_SIZE];     
 static unsigned long pidnum_buffer_size = 0;    //size of receive side buffer
 
-char threshold_buffer[PROCFS_MAX_SIZE];     
+static char threshold_buffer[PROCFS_MAX_SIZE];     
 static unsigned long threshold_buffer_size = 0;    //size of receive side buffer
 
 static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
@@ -86,6 +86,8 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
  
         status  = kstrtoint(procfs_buffer, 10, &requested);
         printk(KERN_INFO "user_space buffer %c\n", user_space_buffer);
+        printk(KERN_INFO "filep %c\n", filep);
+        
         if(status < 0)
         {
                 printk(KERN_INFO "Error while called kstrtoint(...) - %d", status);
@@ -96,6 +98,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
                 printk(KERN_INFO "status > 0 -> success \n");
         }
         // validate level value.
+        printk(KERN_INFO "Requested : %d", requested);
         if(requested< 0 || requested > 100){
                 printk(KERN_INFO "Invalid battery level.\n");
                 return -ENOMEM;
@@ -163,7 +166,7 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
         }
  
         status  = kstrtoint(pidnum_buffer, 10, &requested);
-        
+        printk(KERN_INFO "Requested - pidnum : %d", requested);
         if(status < 0)
         {
                 printk(KERN_INFO "Error while called kstrtoint(...) - %d", status);
@@ -255,7 +258,7 @@ static int threshold_write( struct file *filp, const char *user_space_buffer, un
         }
         // validate pid_th  value
         /// 
-
+        printk(KERN_INFO "Requested- threshold : %d", requested);
         if(requested< 0 || requested > 100){
                 printk(KERN_INFO "Invalid battery level.\n");
                 return -ENOMEM;
@@ -351,7 +354,7 @@ int init_process(void)
         msg="123 123";
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
+        pidnum_entry = proc_create_data("pidnum" ,0666, NULL,&pidnum_ops, msg);
 
         printk(KERN_ALERT "[init] init!!");
 
