@@ -13,7 +13,7 @@
 #include <linux/rcupdate.h>
 #include <linux/string.h>
 
-#include <signal.h>
+#include <linux/signal.h>
  
 MODULE_LICENSE("GPL");
  
