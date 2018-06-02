@@ -35,12 +35,13 @@ MODULE_LICENSE("GPL");
  
  
 static int level = 99;
-static int test_level = 0;                      //indicates level of battery remain.
+int test_level = 0;                      //indicates level of battery remain.
 static int notify_pid = -1;
 static int threshold = -1;
 
-EXPORT_SYMBOL(test_level);
- 
+
+EXPORT_SYMBOL(test_level)
+
 /* End of declaration */
  
 struct pid_th_t
@@ -67,15 +68,6 @@ static unsigned long threshold_buffer_size = 0;    //size of receive side buffer
 static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
 static struct proc_dir_entry *pidnum_entry;       //pidnum, threshold
 static struct proc_dir_entry *threshold_entry;       //pidnum, threshold
-
-#define CHR_DEV_NAME "chr_dev"
-#define CHR_DEV_MAJOR 240
-
-int chr_open(struct inode *inode, struct file *filep) {
-        int number = MINOR(inode->i_rdev);
-        printk("Virtual Charactor Device Open: Minor number is %d\n", number);
-        return 0;
-}
 
 
  
@@ -326,9 +318,6 @@ static int threshold_write( struct file *filp, const char *user_space_buffer, un
         return threshold_buffer_size; 
 }
 
-
-
-EXPORT_SYMBOL(test_level);
 
 static int threshold_read( struct file *filp, char *user_space_buffer, size_t count, loff_t *off )
 {
