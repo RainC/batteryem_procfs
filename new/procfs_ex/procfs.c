@@ -284,7 +284,7 @@ static int threshold_read( struct file *filp, char *user_space_buffer, size_t co
  
         if(*off < 0) *off = 0;
  
-        snprintf(threshold_buffer, 16, "%d\n", test_level);
+        snprintf(threshold_buffer, 16, "%d\n", threshold);
         threshold_buffer_size = strlen(threshold_buffer);
  
         if(*off > threshold_buffer_size){
@@ -354,7 +354,8 @@ int init_process(void)
         msg="123 123";
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        pidnum_entry = proc_create_data("pidnum" ,0666, NULL,&pidnum_ops, msg);
+        pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
+        threshold_entry = proc_create("threshold", 0666, NULL, &threshold_ops);
 
         printk(KERN_ALERT "[init] init!!");
 
