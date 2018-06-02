@@ -342,9 +342,7 @@ int init_process(void)
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
-        threshold_entry = proc_create("threshold", 0666, NULL, &threshold_ops);
         
-
         printk(KERN_ALERT "[init] init!!");
 
         if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL)
