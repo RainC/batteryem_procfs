@@ -12,12 +12,13 @@ int main(void){
 	// Threshold value 는 20
 	// 20 이하일 때 절전모드
 	// 아닐 때 표준모드
-	printf("getpid : %d\n", getpid());
+	int pidnum = getpid();
+	printf("getpid : %d\n",pidnum);	
 	
 	FILE *fp;
 	FILE *fp2;
 	fp = fopen("/proc/pidnum", "w");
-	fprintf(fp, "%d", getpid());
+	fprintf(fp, "%d", pidnum);
 	fclose(fp);
 
 
