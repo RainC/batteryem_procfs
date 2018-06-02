@@ -15,16 +15,7 @@
    
 #include <asm/siginfo.h>  	
 #include <linux/debugfs.h> 
-#include <linux/fs.h>
 
-
-#include "query_ioctl.h"
-
-#include <linux/version.h>
-#include <linux/fs.h>
-#include <linux/cdev.h>
-#include <linux/device.h>
-#include <linux/errno.h> 
 
  
 MODULE_LICENSE("GPL");
@@ -39,10 +30,6 @@ MODULE_LICENSE("GPL");
 #define SIGNAL_USR1  1
 #define SIGNAL_USR2  2
 #define SIG_TEST 44
-
-#define FIRST_MINOR 0
-#define MINOR_CNT 1
-
  
 /* Declaration of variables used in this module */
  
@@ -51,8 +38,7 @@ static int level = 99;
 static int test_level = 0;                      //indicates level of battery remain.
 static int notify_pid = -1;
 static int threshold = -1;
-
-
+ 
 /* End of declaration */
  
 struct pid_th_t
@@ -80,66 +66,17 @@ static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
 static struct proc_dir_entry *pidnum_entry;       //pidnum, threshold
 static struct proc_dir_entry *threshold_entry;       //pidnum, threshold
 
+#define CHR_DEV_NAME "chr_dev"
+#define CHR_DEV_MAJOR 240
 
-static dev_t dev;
-static struct cdev c_dev;
-static struct class *cl;
-
-static int my_open(struct inode *i, struct file *f)
-{
-	return 0;
-}
-static int my_close(struct inode *i, struct file *f)
-{
-	return 0;
-}
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35))
-static int my_ioctl(struct inode *i, struct file *f, unsigned int cmd, unsigned long arg)
-#else
-static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
-#endif
-{
-	query_arg_t q;
-
-	switch (cmd)
-	{
-		case QUERY_GET_VARIABLES:
-			q.test_level = test_level;
-			q.level = test_level;
-			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
-			{
-				return -EACCES;
-			}
-			break;
-		case QUERY_CLR_VARIABLES:
-			test_level = 0; 
-			break;
-		case QUERY_SET_VARIABLES:
-			if (copy_from_user(&q, (query_arg_t *)arg, sizeof(query_arg_t)))
-			{
-				return -EACCES;
-			}
-			test_level = q.test_level;
-			level = q.level; 
-			break;
-		default:
-			return -EINVAL;
-	}
-
-	return 0;
+int chr_open(struct inode *inode, struct file *filep) {
+        int number = MINOR(inode->i_rdev);
+        printk("Virtual Charactor Device Open: Minor number is %d\n", number);
+        return 0;
 }
 
-static struct file_operations query_fops =
-{
-	.owner = THIS_MODULE,
-	.open = my_open,
-	.release = my_close,
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35))
-	.ioctl = my_ioctl
-#else
-	.unlocked_ioctl = my_ioctl
-#endif
-};
+
+ 
 
 
 /* End of declaration */
@@ -168,7 +105,6 @@ static int send_signal_logic(pid_t pid, int sig) {
         printk("Error : %d", error);
         return error;
 }
-
 
 
  
@@ -453,63 +389,29 @@ static const struct file_operations threshold_ops = {
 };
 
  
+
+ 
+ 
 /*
         This function will be called on initialization of  kernel module
 */
-
 int init_process(void)
 {
         int ret = 0;
         char *msg;
         msg="123 123";
-        int driver_regist ;
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
         threshold_entry = proc_create("threshold", 0666, NULL, &threshold_ops);
-        
-        // driver_regist = register_chrdev(CHR_DEV_NAME, CHR_DEV_MAJOR,&chr_fops);
-        
+
         printk(KERN_ALERT "[init] init!!");
 
-        if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL && driver_regist)
+        if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL)
         {
                 printk(KERN_ALERT "[error] pid_th_entry&other is failed");
                 return -ENOMEM;
         }
-
-	struct device *dev_ret;
-
-
-	if ((ret = alloc_chrdev_region(&dev, FIRST_MINOR, MINOR_CNT, "query_ioctl")) < 0)
-	{
-		return ret;
-	}
-
-	cdev_init(&c_dev, &query_fops);
-
-	if ((ret = cdev_add(&c_dev, dev, MINOR_CNT)) < 0)
-	{
-		return ret;
-	}
-	
-	if (IS_ERR(cl = class_create(THIS_MODULE, "char")))
-	{
-		cdev_del(&c_dev);
-		unregister_chrdev_region(dev, MINOR_CNT);
-		return PTR_ERR(cl);
-	}
-	if (IS_ERR(dev_ret = device_create(cl, NULL, dev, NULL, "query")))
-	{
-		class_destroy(cl);
-		cdev_del(&c_dev);
-		unregister_chrdev_region(dev, MINOR_CNT);
-		return PTR_ERR(dev_ret);
-	}
-
-
-
-
         return ret;
  
 }
@@ -523,7 +425,6 @@ void process_exit(void)
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
         remove_proc_entry("pidnum", pidnum_entry);
         remove_proc_entry("threshold", threshold_entry);
-        // unregister_chrdev(CHR_DEV_MAJOR,CHR_DEV_NAME);
 }
 
 module_init(init_process);
