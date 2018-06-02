@@ -18,6 +18,13 @@
 #include <linux/fs.h>
 
 
+#include "query_ioctl.h"
+
+#include <linux/version.h>
+#include <linux/fs.h>
+#include <linux/cdev.h>
+#include <linux/device.h>
+#include <linux/errno.h> 
 
  
 MODULE_LICENSE("GPL");
