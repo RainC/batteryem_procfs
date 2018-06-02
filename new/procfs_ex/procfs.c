@@ -110,9 +110,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
  
         // *off += procfs_buffer_size; // not necessary here!
          int i;
-         for (i = 0; i < 1024 ; i ++) {
-                procfs_buffer[i] = (char)0;
-        }
+        
 
         return procfs_buffer_size; 
 }
@@ -190,10 +188,7 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
         
         int i;
         // *off += pidnum_buffer_size; // not necessary here!
- 
-                for (i = 0; i < 1024 ; i ++) {
-                        pidnum_buffer[i] = (char)0;
-                }
+
         return pidnum_buffer_size; 
 }
 
