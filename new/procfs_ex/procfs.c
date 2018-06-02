@@ -45,13 +45,13 @@ struct pid_th_t foo_data;
  
 /* Declaration of ancillary variables */
  
-static char procfs_buffer[PROCFS_MAX_SIZE];     
+char procfs_buffer[PROCFS_MAX_SIZE];     
 static unsigned long procfs_buffer_size = 0;    //size of receive side buffer
 
-static char pidnum_buffer[PROCFS_MAX_SIZE];     
+char pidnum_buffer[PROCFS_MAX_SIZE];     
 static unsigned long pidnum_buffer_size = 0;    //size of receive side buffer
 
-static char threshold_buffer[PROCFS_MAX_SIZE];     
+char threshold_buffer[PROCFS_MAX_SIZE];     
 static unsigned long threshold_buffer_size = 0;    //size of receive side buffer
 
 static struct proc_dir_entry *proc_entry;       //indicates procfs entry.
