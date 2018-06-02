@@ -132,6 +132,7 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
 static void send_signal_logic(int pidnum, int signal_type) {
         char mybuf[10];
         struct siginfo info;
+        int ret;
 	struct task_struct *t;
         memset(&info, 0, sizeof(struct siginfo));
         info.si_signo = SIG_TEST;
