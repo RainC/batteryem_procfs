@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <fnctl.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 
 #define DEVICE_FILE_NAME "/dev/chr_dev"
 
