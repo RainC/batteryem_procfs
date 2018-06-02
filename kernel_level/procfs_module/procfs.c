@@ -35,12 +35,9 @@ MODULE_LICENSE("GPL");
  
  
 static int level = 99;
-int test_level = 0;                      //indicates level of battery remain.
+static int test_level = 0;                      //indicates level of battery remain.
 static int notify_pid = -1;
 static int threshold = -1;
-
-
-EXPORT_SYMBOL(test_level)
 
 /* End of declaration */
  
