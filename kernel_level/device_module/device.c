@@ -16,7 +16,9 @@
 static dev_t dev;
 static struct cdev c_dev;
 static struct class *cl;
-static int level, test_level;
+static int level;
+
+extern test_level;
 
 static int my_open(struct inode *i, struct file *f)
 {
