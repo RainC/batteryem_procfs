@@ -1,4 +1,4 @@
-obj-m += procfs.o
+obj-m += device.o
 KERNELDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 CFLAGS +=  -DEXPORT_SYMTAB

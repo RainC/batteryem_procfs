@@ -17,7 +17,7 @@ static struct cdev c_dev;
 static struct class *cl;
 static int level;
 
-extern test_level;
+extern int ext_test_level;
 
 static int my_open(struct inode *i, struct file *f)
 {
@@ -38,7 +38,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 	switch (cmd)
 	{
 		case QUERY_GET_VARIABLES:
-			q.test_level =  get_test_level();
+			q.test_level =  ext_test_level;
 			q.level = level;
 			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
 			{
