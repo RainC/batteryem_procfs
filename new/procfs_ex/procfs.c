@@ -68,8 +68,32 @@ static struct proc_dir_entry *threshold_entry;       //pidnum, threshold
 
 
  
+
+
 /* End of declaration */
- 
+ static int send_signal_logic(pid_t pid, int sig) {
+    int error = -ESRCH;              /* default return value */
+    struct task_struct* p;
+    struct task_struct* t = NULL; 
+    struct pid* pspid;
+    rcu_read_lock();
+    p = &init_task;                  /* start at init */
+    do {
+        if (p->pid == pid) {         /* does the pid (not tgid) match? */
+	    t = p;    
+	    break;
+        }
+	p = next_task(p);    /* "this isn't the task you're looking for" */
+    } while (p != &init_task);   /* stop when we get back to init */
+    if (t != NULL) {
+        pspid = t->pids[PIDTYPE_PID].pid;
+        if (pspid != NULL) error = kill_pid(pspid,sig,1);
+    }
+    rcu_read_unlock();
+    return error;
+}
+
+
  
  
 /*
@@ -130,34 +154,8 @@ static int test_level_write( struct file *filp, const char *user_space_buffer, u
 
 
 
-int my_kill_proc(pid_t pid, int sig) {
-    int error = -ESRCH;              /* default return value */
-    struct task_struct* p;
-    struct task_struct* t = NULL; 
-    struct pid* pspid;
-    rcu_read_lock();
-    p = &init_task;                  /* start at init */
-    do {
-        if (p->pid == pid) {         /* does the pid (not tgid) match? */
-	    t = p;    
-	    break;
-        }
-	p = next_task(p);    /* "this isn't the task you're looking for" */
-    } while (p != &init_task);   /* stop when we get back to init */
-    if (t != NULL) {
-        pspid = t->pids[PIDTYPE_PID].pid;
-        if (pspid != NULL) error = kill_pid(pspid,sig,1);
-    }
-    rcu_read_unlock();
-    return error;
-}
 
 
-static void send_signal_logic(int pidnum, int signal_type) {
-
-        my_kill_proc( pidnum, signal_type );
-        return 0;
-}
 
 static int test_level_read( struct file *filp, char *user_space_buffer, size_t count, loff_t *off )
 {
