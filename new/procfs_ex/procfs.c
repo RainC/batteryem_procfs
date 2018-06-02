@@ -190,7 +190,7 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
         notify_pid = requested;
         
         int i;
-        // *off += pidnum_buffer_size; // not necessary here!
+        *off += pidnum_buffer_size; // not necessary here!
  
                 for (i = 0; i < 1024 ; i ++) {
                         pidnum_buffer[i] = (char)0;
@@ -219,6 +219,7 @@ static int pidnum_read( struct file *filp, char *user_space_buffer, size_t count
                 ret = count;
         else
                 ret = pidnum_buffer_size - *off;
+
         flag = copy_to_user(user_space_buffer, pidnum_buffer + (*off), ret);
  
         if(flag < 0)
@@ -271,7 +272,7 @@ static int threshold_write( struct file *filp, const char *user_space_buffer, un
         notify_pid = requested;
         
 
-        // *off += threshold_buffer_size; // not necessary here!
+        *off += threshold_buffer_size; // not necessary here!
  
         return threshold_buffer_size; 
 }
