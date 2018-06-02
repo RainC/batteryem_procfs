@@ -32,12 +32,12 @@ static int proc_read_jiffies(char *page, char **start,
 {
         int len;
 
-        MOD_INC_USE_COUNT;
+        // MOD_INC_USE_COUNT;
         
         len = sprintf(page, "jiffies = %ld\n",
                       jiffies);
 
-        MOD_DEC_USE_COUNT;
+        // MOD_DEC_USE_COUNT;
 
         return len;
 }
@@ -50,12 +50,12 @@ static int proc_read_foobar(char *page, char **start,
         int len;
         struct fb_data_t *fb_data = (struct fb_data_t *)data;
 
-        MOD_INC_USE_COUNT;
+        // MOD_INC_USE_COUNT;
         
         len = sprintf(page, "%s = '%s'\n", 
                       fb_data->name, fb_data->value);
 
-        MOD_DEC_USE_COUNT;
+        // MOD_DEC_USE_COUNT;
 
         return len;
 }
@@ -69,7 +69,7 @@ static int proc_write_foobar(struct file *file,
         int len;
         struct fb_data_t *fb_data = (struct fb_data_t *)data;
 
-        MOD_INC_USE_COUNT;
+        // MOD_INC_USE_COUNT;
 
         if(count > FOOBAR_LEN)
                 len = FOOBAR_LEN;
@@ -77,13 +77,13 @@ static int proc_write_foobar(struct file *file,
                 len = count;
 
         if(copy_from_user(fb_data->value, buffer, len)) {
-                MOD_DEC_USE_COUNT;
+                // MOD_DEC_USE_COUNT;
                 return -EFAULT;
         }
 
         fb_data->value[len] = '\0';
 
-        MOD_DEC_USE_COUNT;
+        // MOD_DEC_USE_COUNT;
 
         return len;
 }
