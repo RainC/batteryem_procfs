@@ -37,7 +37,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 	switch (cmd)
 	{
 		case QUERY_GET_VARIABLES:
-			q.test_level = test_level;
+			q.test_level =  get_test_level();
 			q.level = level;
 			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
 			{
