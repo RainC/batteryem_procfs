@@ -104,7 +104,7 @@ int chr_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigne
         query_arg_t q;
         switch(cmd) {
                 case QUERY_GET_VARIABLES:
-			q.test_battery_value = battery_test;
+			q.test_battery_value = test_level;
 			q.threshold = threshold; 
 			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
 			{
@@ -112,7 +112,7 @@ int chr_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigne
 			}
 			break;
 		case QUERY_CLR_VARIABLES:
-			battery_test = 0;
+			test_level = 0;
 			threshold = 0;
 			break;
 		case QUERY_SET_VARIABLES:
@@ -120,7 +120,7 @@ int chr_ioctl(struct inode *inode, struct file *filep, unsigned int cmd, unsigne
 			{
 				return -EACCES;
 			}
-			battery_test = q.test_battery_value;
+			test_level = q.test_battery_value;
 			threshold = q.threshold;
 			break;
 		default:
