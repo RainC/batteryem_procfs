@@ -17,7 +17,7 @@ static struct cdev c_dev;
 static struct class *cl;
 static int level;
 
-extern int ext_test_level;
+extern int test_level;
 
 static int my_open(struct inode *i, struct file *f)
 {
@@ -38,7 +38,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 	switch (cmd)
 	{
 		case QUERY_GET_VARIABLES:
-			q.test_level =  ext_test_level;
+			q.test_level =  test_level;
 			q.level = level;
 			if (copy_to_user((query_arg_t *)arg, &q, sizeof(query_arg_t)))
 			{
@@ -47,7 +47,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 			break;
 		case QUERY_CLR_VARIABLES:
 			level = 0;
-			ext_test_level = 0;
+			test_level = 0;
 			break;
 		case QUERY_SET_VARIABLES:
 			if (copy_from_user(&q, (query_arg_t *)arg, sizeof(query_arg_t)))
@@ -55,7 +55,7 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 				return -EACCES;
 			}
 			level = q.level;
-			ext_test_level = q.test_level;
+			test_level = q.test_level;
 			break;
 		default:
 			return -EINVAL;
