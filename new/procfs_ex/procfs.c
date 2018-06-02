@@ -4,6 +4,8 @@
 #include <linux/proc_fs.h>
 #include <linux/sched.h>
 #include <asm/uaccess.h>
+#include <asm/io.h>
+#include <linux/fcntl.h>
 
 
 #define MODULE_VERSION "1.0"
