@@ -175,12 +175,6 @@ static int pidnum_write( struct file *filp, const char *user_space_buffer, unsig
         // validate pidnum  value
         /// 
 
-        if(requested< 0 || requested > 100){
-                printk(KERN_INFO "Invalid battery level.\n");
-                return -ENOMEM;
-        } else {
-                printk(KERN_INFO "request value success\n");
-        }
         // accept value.
         // threshold, notify pid detection..
 
