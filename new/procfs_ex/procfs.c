@@ -159,6 +159,7 @@ int init_process(void)
 
         if(proc_entry == NULL && pid_th_entry == NULL)
         {
+                printk(KERN_ALERT "[error] pid_th_entry&other null");
                 return -ENOMEM;
         }
         return ret;
