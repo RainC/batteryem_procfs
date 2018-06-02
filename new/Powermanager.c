@@ -14,10 +14,14 @@ int main(void){
 	// 아닐 때 표준모드
 
 	FILE *fp;
-	fp = fopen("/proc/battery/pid_th", "w");
+	fp = fopen("/proc/pidnum", "w");
 	// fprintf(fp, "This is testing for fprintf...\n");
-	fprintf(fp, "%d %d", getpid(), 20);
+	fprintf(fp, "%d", getpid());
 	fclose(fp);
+	fp = fopen("/proc/threshold", "w");
+	fprintf(fp, "%d", 20);
+	fclose(fp);
+
 	// 신호처리 예외
 	if (signal(SIGUSR1, sig_usr) == SIG_ERR)
 		printf("can't catch SIGUSR1"); 
