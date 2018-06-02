@@ -340,8 +340,8 @@ int init_process(void)
         char *msg;
         msg="123 123";
 
-        proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
-        pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
+        proc_entry = proc_create_data(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops, msg);
+        pidnum_entry = proc_create_data("pidnum" ,0666, NULL,&pidnum_ops, msg);
 
         printk(KERN_ALERT "[init] init!!");
 
