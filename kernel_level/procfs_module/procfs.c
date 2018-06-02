@@ -326,13 +326,9 @@ static int threshold_write( struct file *filp, const char *user_space_buffer, un
         return threshold_buffer_size; 
 }
 
-int get_test_level(){ // from other kernel module function
-        printk(KERN_ALERT "from other source%s()\n", __FUNCTION__);
- 
-        return test_level;
-}
 
-EXPORT_SYMBOL(get_test_level);
+
+EXPORT_SYMBOL(test_level);
 
 static int threshold_read( struct file *filp, char *user_space_buffer, size_t count, loff_t *off )
 {
