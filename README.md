@@ -6,6 +6,7 @@
 - 구현 과정의 결정 사항
 - 시연 방법
 - 성공 결과
+- 시연 Sample 영상
 
 
 ## 시행 착오
@@ -206,3 +207,6 @@ sudo ./Emulator
     - 절전모드,표준모드 같이 보이는 모습 있음
 - 오른쪽 `Emulator`
 - 왼쪽 아래 `dmesg` 커널 Message
+
+### 시연 Sample 영상
+[![샘플영상](https://img.youtube.com/vi/kNpJy7GTUEk/0.jpg)](https://www.youtube.com/watch?v=kNpJy7GTUEk)
