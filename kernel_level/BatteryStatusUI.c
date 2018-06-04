@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     int device;
    
 	char wbuf[128] = "10" ; 
-	char rbuf[128] = "efefef";
+	char rbuf[128] = "";
 	int n = atoi (argv[1]);
 	// read 먼저 
 	// 그리고 write 해보기
