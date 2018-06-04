@@ -13,7 +13,7 @@
 int main(int argc, char *argv[]) {
     int device;
    
-	char wbuf[128] = argv[2] ; 
+	char wbuf[128] = "" ; 
 	char rbuf[128] = "";
 	int n = atoi (argv[1]);
 	// read 먼저 
@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
 	if (device >= 0 ) {
         printf("Device file open\n");
         ioctl(device , n );
-		write(device,wbuf , 10);
-		printf("write requested %s \n", wbuf);
+		write(device,argv[2] , 10);
+		printf("write requested %s \n", argv[2]);
 		read(device ,rbuf, 10);
 		printf("read value %s \n", rbuf);
     } else {
