@@ -409,6 +409,8 @@ int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsig
         switch (cmd) {
                 case 0: printk("Cmd value is %d\n" , cmd); break;
                 case 4: printk("Cmd value is %d\n" , cmd ); break;
+                default:
+                        printk("Default : %d, arg : %lu", cmd, arg); break;
         }
         return 0;
 }
