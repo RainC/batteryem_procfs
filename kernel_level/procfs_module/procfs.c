@@ -394,7 +394,7 @@ int chr_open (struct inode *inode, struct file *filep) {
 ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
         // int status;
         kstrtoint(buf, 10, &test_level);
-        // printk("write_value : %d", status);
+        printk("current test_level : %d", test_level);
         return count;
 }
 
@@ -402,6 +402,7 @@ ssize_t chr_read(struct file *filep, const char *buf, size_t count ,loff_t *f_po
         // int status;
         kstrtoint(buf, 10, &test_level);
         // printk("read_value : %d", status);
+        printk("current test_level : %d", test_level);
         return count;
 }
 int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsigned long arg) {
