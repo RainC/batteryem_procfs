@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 		write(device,argv[2] , 10);
 		printf("write requested %s \n", argv[2]);
 		read(device ,rbuf, 10);
-		printf("read value %s \n", rbuf);
+		printf("read value %c \n", read(device ,rbuf, 10););
     } else {
         perror("Error open device (sudo needed)");
     }
