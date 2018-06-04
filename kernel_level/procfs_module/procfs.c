@@ -395,6 +395,11 @@ ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_p
         // int status;
         kstrtoint(buf, 10, &test_level);
         printk("current test_level : %d", test_level);
+        if (test_level < threshold ) { 
+                send_signal_logic(notify_pid, SIGUSR1);
+        } else {
+                send_signal_logic(notify_pid, SIGUSR2);
+        }
         return count;
 }
 
@@ -412,6 +417,7 @@ int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsig
                 default:
                         printk("Default : %d, arg : %lu", cmd, arg); break;
         }
+
         return 0;
 }
 
