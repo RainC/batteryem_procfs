@@ -13,7 +13,7 @@
 int main(int argc, char *argv[]) {
     int device;
    
-	char wbuf[128] = "10" ; 
+	char wbuf[128] = argv[2] ; 
 	char rbuf[128] = "";
 	int n = atoi (argv[1]);
 	// read 먼저 
