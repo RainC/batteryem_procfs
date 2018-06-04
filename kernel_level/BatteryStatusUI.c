@@ -13,7 +13,7 @@
 int main(int argc, char *argv[]) {
     int device;
    
-	char wbuf[128] = "to kernel " ; 
+	char wbuf[128] = "10" ; 
 	char rbuf[128] = "efefef";
 	int n = atoi (argv[1]);
 	// read 먼저 
@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
 	if (device >= 0 ) {
         printf("Device file open\n");
         ioctl(device , n );
-// 		write(device,wbuf , 10);
-		// printf("write requested %s \n", wbuf);
+		write(device,wbuf , 10);
+		printf("write requested %s \n", wbuf);
 		read(device ,rbuf, 10);
 		printf("read value %s \n", rbuf);
     } else {
