@@ -400,7 +400,7 @@ ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_p
 
 ssize_t chr_read(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
         // int status;
-        kstrtoint(buf, 10, &test_level);
+        // kstrtoint(buf, 10, &test_level);
         // printk("read_value : %d", status);
         printk("current test_level : %d", test_level);
         return count;
