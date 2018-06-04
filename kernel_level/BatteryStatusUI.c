@@ -18,12 +18,13 @@ int main(int argc, char *argv[]) {
 	int n = atoi (argv[1]);
 	// read 먼저 
 	// 그리고 write 해보기
+	// set_battery_value, read_battery_value implements
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
         ioctl(device , n );
-		write(device,wbuf , 10);
-		printf("write requested %s \n", wbuf);
+// 		write(device,wbuf , 10);
+		// printf("write requested %s \n", wbuf);
 		read(device ,rbuf, 10);
 		printf("read value %s \n", rbuf);
     } else {
