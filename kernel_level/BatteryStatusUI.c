@@ -10,7 +10,7 @@
 
  
 
-int main() {
+int main(int argc, char *argv[]) {
     int device;
     device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	char wbuf[128] = "to kernel " ; 
