@@ -30,6 +30,10 @@ MODULE_LICENSE("GPL");
 #define SIGNAL_USR1  1
 #define SIGNAL_USR2  2
 #define SIG_TEST 44
+
+#define CHR_DEV_NAME "chr_dev"
+#define CHR_DEV_MAJOR 240
+
  
 /* Declaration of variables used in this module */
  
@@ -379,9 +383,42 @@ static const struct file_operations threshold_ops = {
         .read = threshold_read,
 };
 
- 
 
- 
+// Device driver test
+int chr_open (struct inode *inode, struct file *filep) {
+        int number = MINOR (inode->i_rdev);
+        printk("Virtual Character Device open: Minor %d", number);
+        return 0;
+}
+
+ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
+        return count;
+}
+
+ssize_t chr_read(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
+        return count;
+}
+int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsigned long arg) {
+        switch (cmd) {
+                case 0: printk("Cmd value is %d\n" , cmd); break;
+                case 4: printk("Cmd value is %d\n" , cmd ); break;
+        }
+        return 0;
+}
+
+int chr_release(struct inode *inode, struct file *filep) {
+        printk("Virtual Character device Release\n");
+        return 0;
+}
+
+struct file_operations chr_fops = {
+        owner: THIS_MODULE,
+        unlocked_ioctl: chr_ioctl,
+        write: chr_write,
+        read: chr_read,
+        open: chr_open,
+        release: chr_release
+};
  
 /*
         This function will be called on initialization of  kernel module
@@ -390,12 +427,14 @@ int init_process(void)
 {
         int ret = 0;
         char *msg;
+        int regist;
         msg="123 123";
 
         proc_entry = proc_create(PROCFS_TESTLEVEL, 0666, NULL, &my_proc_fops);
         pidnum_entry = proc_create("pidnum" ,0666, NULL,&pidnum_ops);
         threshold_entry = proc_create("threshold", 0666, NULL, &threshold_ops);
-
+        regist = register_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME, &chr_fops);
+        printk("Major number : %d", regist);
         printk(KERN_ALERT "[init] init!!");
 
         if(proc_entry == NULL && pidnum_entry == NULL && threshold_entry == NULL)
@@ -416,6 +455,7 @@ void process_exit(void)
         remove_proc_entry(PROCFS_TESTLEVEL, proc_entry);
         remove_proc_entry("pidnum", pidnum_entry);
         remove_proc_entry("threshold", threshold_entry);
+        unregister_chrdev(CHR_DEV_MAJOR, CHR_DEV_NAME);
 }
 
 module_init(init_process);
