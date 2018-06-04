@@ -16,6 +16,8 @@ int main(int argc, char *argv[]) {
 	char wbuf[128] = "to kernel " ; 
 	char rbuf[128] = "efefef";
 	int n = atoi (argv[1]);
+	// read 먼저 
+	// 그리고 write 해보기
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
