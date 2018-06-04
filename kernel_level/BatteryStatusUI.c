@@ -25,8 +25,8 @@ int main(int argc, char *argv[]) {
         ioctl(device , n );
 		write(device,argv[2] , 10);
 		printf("write requested %s \n", argv[2]);
-		read(device ,rbuf, 10);
-		printf("read value %c \n", read(device ,rbuf, 10));
+		read(device, rbuf, 10) ;
+		printf("read value %c \n", rbuf);
     } else {
         perror("Error open device (sudo needed)");
     }
