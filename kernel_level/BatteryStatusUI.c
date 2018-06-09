@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 		
 		ioctl (device, set_test_value);
 		printf("Setting threshold value, value is %d", set_threshold); 
-		write(device,set_threshold , 10); // set_test_value 설정
+		write(device,wbuf , 10); // set_test_value 설정
 		printf("write requested %s \n", argv[2]);
 		read(device, rbuf, 10) ;
 		printf("read value %c \n", rbuf);
