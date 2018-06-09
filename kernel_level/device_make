@@ -1,3 +1,5 @@
 #!/bin/sh
+cd procfs_module/
+make
 sudo insmod procfs.ko
-sudo mknod /dev/chr_dev 240 10
+sudo mknod /dev/chr_dev c 240 0
