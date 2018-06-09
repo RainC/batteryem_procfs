@@ -407,7 +407,7 @@ ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_p
         if (ioctl_mode == 1) {
                 kstrtoint(buf, 10, &test_level);
                 printk("current test_level : %d", test_level);
-                ioctl_mode = 0;
+                // ioctl_mode = 0;
                 check_battery_level();
                 // check only when test_level changed
         }
