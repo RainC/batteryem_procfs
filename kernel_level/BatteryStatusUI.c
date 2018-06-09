@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 
 
 		printf("set_test_value : %d\n", set_test_value);
-		// ioctl (device, 1);	// Set receivemode to test_value
+		ioctl (device, 1);	// Set receivemode to test_value
 		sprintf(wbuf, "%d", set_test_value); // assigned int value to chr[XXX]
 		write(device,wbuf , 1); // set_test_value 설정
 		 
