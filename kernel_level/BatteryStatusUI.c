@@ -22,6 +22,8 @@ int main(int argc, char *argv[]) {
 	// test_level write, threshold write implements
 	// ioctl = test_level 값 설정
 	// chr_write = threshold 값 설정
+	// 사용 방법
+	// ./BatteryStatus <set_threshold> <set_test_value>
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
