@@ -30,14 +30,14 @@ int main(int argc, char *argv[]) {
         printf("Device file open\n");
 
 		printf("set_threshold value %d\n", set_threshold);
-		ioctl(device,0);
-		ioctl (device, 0);	// Set receivemode to Threshold
+		
+		// ioctl (device, 0);	// Set receivemode to Threshold
 		sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
 		write(device,wbuf , 0); // set_threshold 설정
 
 
 		printf("set_test_value : %d\n", set_test_value);
-		ioctl (device, 1);	// Set receivemode to test_value
+		// ioctl (device, 1);	// Set receivemode to test_value
 		sprintf(wbuf, "%d", set_test_value); // assigned int value to chr[XXX]
 		write(device,wbuf , 1); // set_test_value 설정
 		 
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 		read(device, rbuf, 0) ;
 		// printf("read value %s \n", rbuf);
 		// Read is not enabled (동작 안함)
-		
+		// ioctl(device,0);
     } else {
         perror("Error open device (sudo needed)");
     }
