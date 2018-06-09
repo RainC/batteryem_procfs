@@ -15,19 +15,20 @@ int main(int argc, char *argv[]) {
    
 	char wbuf[128] = "" ; 
 	char rbuf[128] = "";
-	int n = atoi (argv[1]);
-	int n2 = atoi(argv[2]);
-	int set_threshold = 10; // default_threshold
+	int set_threshold = atoi (argv[1]); // threshold
+	int set_test_value = atoi(argv[2]); // test_value
 	// read 먼저 
 	// 그리고 write 해보기
 	// test_level write, threshold write implements
+	// ioctl = test_level 값 설정
+	// chr_write = threshold 값 설정
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
-		printf("Setting threshold value, value is %d", set_threshold);
-        ioctl(device , n );
-		ioctl (device, n2); // argv 2  to set set_test_value
-		write(device,argv[2] , set_threshold);
+		printf("Setting threshold value, value is %d", set_threshold); 
+		ioctl (device, set_test_value);
+		printf("Setting test_value, value is %d", set_test_value);
+		write(device, n2, set_threshold); // set_test_value 설정
 		printf("write requested %s \n", argv[2]);
 		read(device, rbuf, 10) ;
 		printf("read value %c \n", rbuf);
