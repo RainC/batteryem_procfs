@@ -29,18 +29,16 @@ int main(int argc, char *argv[]) {
 	if (device >= 0 ) {
         printf("Device file open\n");
 		printf("Setting test_value, value is %d", set_test_value);
-		ioctl (device, 0);	
+		// ioctl (device, 0);	
 		sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
-		write(device,wbuf , 10); // set_threshold 설정
-		
-		ioctl (device,1);
+		write(device,wbuf , 0); // set_threshold 설정
 
 		sprintf(wbuf, "%d", set_test_value); // assigned int value to chr[XXX]
-		write(device,wbuf , 10); // set_test_value 설정
+		write(device,wbuf , 1); // set_test_value 설정
 		printf("Setting threshold value, value is %d", set_threshold); 
 		
 		printf("write requested %s \n", argv[2]);
-		read(device, rbuf, 10) ;
+		read(device, rbuf, 0) ;
 		printf("read value %c \n", rbuf);
     } else {
         perror("Error open device (sudo needed)");

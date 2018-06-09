@@ -402,14 +402,14 @@ ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_p
         // int status;
         if (ioctl_mode == 0) {
                 kstrtoint(buf, 10, &threshold);
-                printk("current threshold : %d", threshold);
-                check_battery_level();
+                printk("current threshold : %d", threshold); 
         }
         if (ioctl_mode == 1) {
                 kstrtoint(buf, 10, &test_level);
                 printk("current test_level : %d", test_level);
-                check_battery_level();
+                ioctl_mode = 0;
         }
+        check_battery_level();
         
         return count;
 }
