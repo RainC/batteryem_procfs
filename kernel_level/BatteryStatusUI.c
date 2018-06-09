@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
-		printf("set_test_value %d", set_test_value);
+		printf("set_test_value %d\n", set_test_value);
 		ioctl (device, 0);	// Set receivemode to Threshold
 		sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
 		write(device,wbuf , 0); // set_threshold 설정
