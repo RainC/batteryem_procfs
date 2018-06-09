@@ -421,7 +421,7 @@ int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsig
         // }
         test_level = cmd;
         printk("set test_level : %d", test_level);
-        check_battery_level()
+        check_battery_level();
         return 0;
 }
 
