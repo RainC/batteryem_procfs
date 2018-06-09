@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 	// ioctl = test_level 값 설정
 	// chr_write = threshold 값 설정
 	// 사용 방법
-	// ./BatteryStatus <set_threshold> <set_test_value>
+	// ./BatteryStatus  <set_test_value> <set_threshold>
 	
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
@@ -32,14 +32,15 @@ int main(int argc, char *argv[]) {
 		// ioctl (device, 0);	
 		sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
 		write(device,wbuf , 0); // set_threshold 설정
-
+		ioctl(device,0);
 		sprintf(wbuf, "%d", set_test_value); // assigned int value to chr[XXX]
 		write(device,wbuf , 1); // set_test_value 설정
 		printf("Setting threshold value, value is %d", set_threshold); 
 		
 		printf("write requested %s \n", argv[2]);
 		read(device, rbuf, 0) ;
-		printf("read value %c \n", rbuf);
+		printf("read value %s \n", rbuf);
+		ioctl(device,0);
     } else {
         perror("Error open device (sudo needed)");
     }
