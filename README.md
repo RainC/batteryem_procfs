@@ -1,3 +1,4 @@
+
 ## 목차
 - 제출자 정보
 - 시행 착오
@@ -6,11 +7,10 @@
 - 구현 과정의 결정 사항
 - 시연 방법
 - 성공 결과
-- 시연 Sample 영상
-
-
+ 
 ## 시행 착오
-- 짧은 후기 
+- 짧은 후기
+- `Kernel level 부터 시작해서 딥해서 너무너무어려웠습니다.....`
 - 시행착오 #1 dmesg
 
 ![](https://i.imgur.com/V1pWam9.png)
@@ -153,8 +153,43 @@ static const struct file_operations threshold_ops = {
 };
 ```
 
+#### Device Driver read/write 연동 처리 - write 만 구현
+```
+struct file_operations chr_fops = {
+        owner: THIS_MODULE,
+        unlocked_ioctl: chr_ioctl,
+        write: chr_write,
+        read: chr_read,
+        open: chr_open,
+        release: chr_release
+};
+```
+
+#### BatteryStatusUI 에서 Device driver 의 `threshold` 값 설정하는 방법
+```
+int set_threshold = 10; 
+printf("Device file open\n");
+printf("set_threshold value %d\n", set_threshold);
+sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
+write(device,wbuf , 0); // set_threshold 설정
+```
+
+#### BatteryStatusUI 에서 Device driver 의 `test_value` 값 설정하는 방법
+```
+printf("set_test_value : %d\n", set_test_value);
+ioctl (device, 1);	// Set receivemode to test_value
+sprintf(wbuf, "%d", set_test_value); // assigned int value to chr[XXX]
+write(device,wbuf , 1); // set_test_value 설정
+read(device, rbuf, 0) ;
+ioctl(device,0); // 다음 StatusUI 실행을 위해 ioctl 0 으로 값 설정(중요)
+```
+- Device Driver 에서 test_value 값이 세팅되면 ioctl_mode 를 0으로 다시 변경
+
+
+
 ## 구현 과정의 결정 사항
-![](https://i.imgur.com/HUKGl5P.png)
+![](https://i.imgur.com/FhF6Sbl.png)
+
 
 - `구현 성공 Details`
     - `Register Setting` - `PowerManager` 가 procfs 모듈을 통해 pidnum, threshold 값을 초기화 해줍니다. pidnum 은 `PowerManager` 의 Process ID, threshold 는 `20` 으로 설정하였습니다.
@@ -164,8 +199,9 @@ static const struct file_operations threshold_ops = {
     - pidnum 은 `/proc/pidnum`
     - `Emulator` 은 미리 준비된 스크립트에서 `/proc/` 로 Redirection 되게 수정하였습니다. (ecampus)
     - `NotifierLogic` 은 procfs 모듈 안에 있으며, `battery_test`, `threshold` 값을 모니터링 하고,`/proc/pidnum` 값을 통해 `PowerManager` 에 `SIGUSR1`, `SIGUSR2` 신호를 보냅니다.
+    - `BatteryStatusUI` 에서 `DeviceDriver` 를 통해 `ioctl` Command 명령이 `0` 이면 threshold,  `1` 이면 test_value 값을 `chr_write` 함수에서 설정해 줍니다.
 - `구현 실패 Details`
-    - Device driver module 를 개발하여, `Battery Status UI` 를 구현해야 하는데, 이걸 구현하지 못했습니다. 그래서 procfs_module 와 device_module 를 하나로 합쳐서 procfs 의 `test_battery` 변수를 전달하게 하려고 시도했지만, 메모리 오류가 나면서 출력값이 나오지 않았습니다. `시행착오 #3` 에 시도한 흔적이 있습니다.
+    - Battery Status UI 에서 Read를 구현하지 못했습니다. `test_value` , `threshold` Read 
 
 ### 시연 방법
 - 라즈베리파이 환경이여야 합니다. `https://github.com/notro/rpi-source/wiki` 를 참고해 주세요. 
@@ -181,6 +217,10 @@ make
 - procfs 모듈을 설치해 줍니다.
 ```
 sudo insmod procfs.ko
+```
+- device 모듈 연동을 위한 디바이스 파일 생성
+```
+sudo mknod /dev/chr_dev c 240 0 
 ```
 - PowerManager 를 컴파일 해줍니다.
 ```
@@ -199,7 +239,27 @@ sudo ./Emulator
 ```
 - 이렇게 진행하면, Emulator 는 /proc/test_level 에 파일을 작성하면 , 커널에서 level 을 감지하고, Powermanager 에서 절전/표준 신호를 받게 됩니다.
 
-### 성공 결과
+- BatteryStatusUI 실행 방법
+```
+gcc -o BatteryStatusUI BatteryStatusUI.c
+```
+
+```
+sudo ./BatteryStatusUI <Threshold> <test_value>
+```
+
+
+```
+sudo ./BatteryStatusUI 10 50
+Device file open
+set_threshold value 10
+set_test_value : 50
+```
+
+
+
+
+### 성공 결과 (BatteryEmulator)
 
 ![](https://i.imgur.com/SOERgej.png)
 
@@ -208,5 +268,12 @@ sudo ./Emulator
 - 오른쪽 `Emulator`
 - 왼쪽 아래 `dmesg` 커널 Message
 
-### 시연 Sample 영상
-[![샘플영상](https://img.youtube.com/vi/kNpJy7GTUEk/0.jpg)](https://www.youtube.com/watch?v=kNpJy7GTUEk)
+
+### 성공 결과 (Device Driver)
+![](https://i.imgur.com/7bU0orv.png)
+
+- 왼쪽 `BatteryStatusUI`
+- BatteryStatus UI 인자값 옵션
+    - `BatteryStatusUI <Threshold> <test_value>`
+- 오른쪽 `PowerManager`
+- 중앙쪽엔 `dmesg` , 드레그 된 부분 Check
