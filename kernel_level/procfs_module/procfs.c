@@ -407,7 +407,7 @@ ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_p
         if (ioctl_mode == 1) {
                 kstrtoint(buf, 10, &test_level);
                 printk("current test_level : %d", test_level);
-                // ioctl_mode = 0;
+                ioctl_mode = 0;
                 check_battery_level();
                 // check only when test_level changed
         }
@@ -427,14 +427,14 @@ int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsig
         switch (cmd) {
                 case 0:
                         ioctl_mode = 0;
-                        printk("IOCTL VALUE IS %d\n" , cmd ); 
-                        printk("SET Threshold Receive Mode");
+                        printk("IOCTL VALUE IS %d - threshold\n" , cmd ); 
+                        // printk("SET Threshold Receive Mode");
                         break;
                 break;
                 case 1:
                         ioctl_mode = 1;
-                        printk("IOCTL VALUE IS  %d\n" , cmd ); 
-                        printk("SET test_value Receive Mode");
+                        printk("IOCTL VALUE IS  %d - test_value\n" , cmd ); 
+                        // printk("SET test_value Receive Mode");
                         break;
                 default:
                         printk("[Not Setted] Default : %d, arg : %lu", cmd, arg); break;
