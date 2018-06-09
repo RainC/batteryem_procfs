@@ -390,16 +390,18 @@ int chr_open (struct inode *inode, struct file *filep) {
         printk("Virtual Character Device open: Minor %d", number);
         return 0;
 }
-
-ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
-        // int status;
-        kstrtoint(buf, 10, &test_level);
-        printk("current test_level : %d", test_level);
+void check_battery_level () {
         if (test_level < threshold ) { 
                 send_signal_logic(notify_pid, SIGUSR1);
         } else {
                 send_signal_logic(notify_pid, SIGUSR2);
         }
+}
+ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
+        // int status;
+        kstrtoint(buf, 10, &threshold);
+        printk("current threshold : %d", threshold);
+        
         return count;
 }
 
@@ -407,17 +409,19 @@ ssize_t chr_read(struct file *filep, const char *buf, size_t count ,loff_t *f_po
         // int status;
         // kstrtoint(buf, 10, &test_level);
         // printk("read_value : %d", status);
-        printk("current test_level : %d", test_level);
+        printk("current threshold : %d", threshold);
         return count;
 }
 int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsigned long arg) {
-        switch (cmd) {
-                case 0: printk("Cmd value is %d\n" , cmd); break;
-                case 4: printk("Cmd value is %d\n" , cmd ); break;
-                default:
-                        printk("Default : %d, arg : %lu", cmd, arg); break;
-        }
-
+        // switch (cmd) {
+        //         case 0: printk("Cmd value is %d\n" , cmd); break;
+        //         case 4: printk("Cmd value is %d\n" , cmd ); break;
+        //         default:
+        //                 printk("Default : %d, arg : %lu", cmd, arg); break;
+        // }
+        test_level = cmd;
+        printk("set test_level : %d", test_level);
+        check_battery_level()
         return 0;
 }
 
