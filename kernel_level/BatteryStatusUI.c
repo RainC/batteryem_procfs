@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 		read(device, rbuf, 0) ;
 		// printf("read value %s \n", rbuf);
 		// Read is not enabled (동작 안함)
-		// ioctl(device,0);
+		ioctl(device,0);
     } else {
         perror("Error open device (sudo needed)");
     }
