@@ -24,15 +24,21 @@ int main(int argc, char *argv[]) {
 	// chr_write = threshold 값 설정
 	// 사용 방법
 	// ./BatteryStatus <set_threshold> <set_test_value>
-	sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
+	
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
 		printf("Setting test_value, value is %d", set_test_value);
+		ioctl (device, 0);	
+		sprintf(wbuf, "%d", set_threshold); // assigned int value to chr[XXX]
+		write(device,wbuf , 10); // set_threshold 설정
 		
-		ioctl (device, set_test_value);
-		printf("Setting threshold value, value is %d", set_threshold); 
+		ioctl (device,1);
+
+		sprintf(wbuf, "%d", set_test_value); // assigned int value to chr[XXX]
 		write(device,wbuf , 10); // set_test_value 설정
+		printf("Setting threshold value, value is %d", set_threshold); 
+		
 		printf("write requested %s \n", argv[2]);
 		read(device, rbuf, 10) ;
 		printf("read value %c \n", rbuf);

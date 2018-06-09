@@ -42,6 +42,7 @@ static int level = 99;
 static int test_level = 0;                      //indicates level of battery remain.
 static int notify_pid = -1;
 static int threshold = -1;
+static int ioctl_mode = 0; // inti ioctl for assignment level, test_level 
 
 /* End of declaration */
  
@@ -399,8 +400,16 @@ void check_battery_level (void) {
 }
 ssize_t chr_write(struct file *filep, const char *buf, size_t count ,loff_t *f_pos) {
         // int status;
-        kstrtoint(buf, 10, &threshold);
-        printk("current threshold : %d", threshold);
+        if (ioctl_mode == 0) {
+                kstrtoint(buf, 10, &threshold);
+                printk("current threshold : %d", threshold);
+                check_battery_level();
+        }
+        if (ioctl_mode == 1) {
+                kstrtoint(buf, 10, &test_level);
+                printk("current test_level : %d", test_level);
+                check_battery_level();
+        }
         
         return count;
 }
@@ -413,15 +422,21 @@ ssize_t chr_read(struct file *filep, const char *buf, size_t count ,loff_t *f_po
         return count;
 }
 int chr_ioctl(struct inode *inode , struct file *filep, unsigned int cmd , unsigned long arg) {
-        // switch (cmd) {
-        //         case 0: printk("Cmd value is %d\n" , cmd); break;
-        //         case 4: printk("Cmd value is %d\n" , cmd ); break;
-        //         default:
-        //                 printk("Default : %d, arg : %lu", cmd, arg); break;
-        // }
-        test_level =(int) cmd;
-        printk("set test_level : %d", test_level);
-        // check_battery_level();
+        switch (cmd) {
+                case 0:
+                        ioctl_mode = 0;
+                        printk("IOCTL VALUE IS %d\n" , cmd ); 
+                        printk("SET Threshold Receive Mode");
+                        break;
+                break;
+                case 1:
+                        ioctl_mode = 1;
+                        printk("IOCTL VALUE IS  %d\n" , cmd ); 
+                        printk("SET test_value Receive Mode");
+                        break;
+                default:
+                        printk("[Not Setted] Default : %d, arg : %lu", cmd, arg); break;
+        }
         return 0;
 }
 
