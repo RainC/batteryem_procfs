@@ -390,7 +390,7 @@ int chr_open (struct inode *inode, struct file *filep) {
         printk("Virtual Character Device open: Minor %d", number);
         return 0;
 }
-void check_battery_level () {
+void check_battery_level (void) {
         if (test_level < threshold ) { 
                 send_signal_logic(notify_pid, SIGUSR1);
         } else {
