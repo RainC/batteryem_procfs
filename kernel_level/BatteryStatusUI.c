@@ -27,10 +27,11 @@ int main(int argc, char *argv[]) {
 	device = open(DEVICE_FILE_NAME, O_RDWR | O_NDELAY) ;
 	if (device >= 0 ) {
         printf("Device file open\n");
-		printf("Setting threshold value, value is %d", set_threshold); 
-		ioctl (device, set_test_value);
 		printf("Setting test_value, value is %d", set_test_value);
-		write(device, set_test_value, set_threshold); // set_test_value 설정
+		
+		ioctl (device, set_test_value);
+		printf("Setting threshold value, value is %d", set_threshold); 
+		write(device,set_threshold , 10); // set_test_value 설정
 		printf("write requested %s \n", argv[2]);
 		read(device, rbuf, 10) ;
 		printf("read value %c \n", rbuf);
